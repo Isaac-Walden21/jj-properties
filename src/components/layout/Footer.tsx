@@ -9,9 +9,13 @@ export function Footer() {
       <div className="mx-auto grid w-[min(1500px,92vw)] gap-12 py-16 md:grid-cols-3">
         {/* Brand column */}
         <div className="flex flex-col gap-3">
-          <span className="font-display text-2xl font-bold tracking-tight">
-            {site.name}
-          </span>
+          <Link href="/">
+            <img
+              src="/logo.png"
+              alt="JJ Properties"
+              className="h-12 w-auto brightness-0 invert"
+            />
+          </Link>
           <p className="text-sm leading-relaxed text-stone">
             {site.tagline}
           </p>

@@ -77,9 +77,8 @@ export function HeroSection() {
           </ButtonLink>
           <ButtonLink
             href={hero.secondaryCta.href}
-            variant="secondary"
+            variant="outline-light"
             size="lg"
-            className="border-cream text-cream hover:bg-cream hover:text-timber"
           >
             {hero.secondaryCta.label}
           </ButtonLink>

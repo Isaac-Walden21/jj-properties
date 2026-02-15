@@ -67,13 +67,12 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex w-[min(1500px,92vw)] items-center justify-between gap-6 py-4">
-        <Link href="/" className="group flex flex-col">
-          <span className="font-display text-xl font-bold tracking-tight text-timber transition-transform group-hover:scale-[1.02]">
-            JJ Properties
-          </span>
-          <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber">
-            Upper Peninsula Hospitality
-          </span>
+        <Link href="/" className="group shrink-0">
+          <img
+            src="/logo.png"
+            alt="JJ Properties — Commercial Real Estate, Upper Peninsula MI"
+            className="h-10 w-auto transition-transform group-hover:scale-[1.02] sm:h-12"
+          />
         </Link>
 
         <button

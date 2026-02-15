@@ -44,9 +44,8 @@ export function CTABanner({
               <div className="mt-8">
                 <ButtonLink
                   href={ctaHref}
-                  variant="primary"
+                  variant="light"
                   size="lg"
-                  className="border-cream bg-cream text-timber hover:bg-cream/90"
                 >
                   {ctaLabel}
                 </ButtonLink>

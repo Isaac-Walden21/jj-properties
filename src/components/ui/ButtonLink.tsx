@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { type AnchorHTMLAttributes, type ReactNode } from "react";
-import { buttonStyles } from "./button-styles";
+import { buttonStyles, type ButtonVariant, type ButtonSize } from "./button-styles";
 
 interface ButtonLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
-  variant?: "primary" | "secondary";
-  size?: "sm" | "md" | "lg";
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   children: ReactNode;
   className?: string;
 }

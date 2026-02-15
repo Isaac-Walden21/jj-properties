@@ -1,12 +1,16 @@
 import { cn } from "@/lib/utils";
 
-export type ButtonVariant = "primary" | "secondary";
+export type ButtonVariant = "primary" | "secondary" | "outline-light" | "light";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-amber text-cream hover:bg-amber-dark",
+  primary: "bg-amber text-cream border-2 border-amber hover:bg-amber-dark hover:border-amber-dark",
   secondary:
     "border-2 border-timber text-timber bg-transparent hover:bg-timber hover:text-cream",
+  "outline-light":
+    "border-2 border-cream text-cream bg-transparent hover:bg-cream hover:text-timber",
+  light:
+    "bg-cream text-amber border-2 border-cream hover:bg-amber hover:text-cream hover:border-amber",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
