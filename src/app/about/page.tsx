@@ -26,18 +26,31 @@ export default function AboutPage() {
                 Our Story
               </h2>
               <p className="mt-6 text-base leading-relaxed text-timber/80 md:text-lg">
-                Jack and Jeff didn&apos;t set out to build a hospitality
-                portfolio. It started with a single property and a shared
-                conviction that the Upper Peninsula deserved better lodging
-                options — places that honored the rugged beauty of the region
-                while delivering the comfort and warmth guests remember long
-                after they leave. Over the years, that conviction grew into JJ
-                Properties: five distinctive hotels, resorts, and inns, each
-                with its own character, all united by a commitment to genuine
-                U.P. hospitality. From waterfront cabins on Lake Michigan to a
-                historic hotel in the heart of Cedarville, every property in the
-                portfolio reflects the hands-on approach Jack and Jeff bring to
-                everything they do.
+                Jeff and Jack are no strangers to acquiring and successfully
+                managing vacation properties in Northern Michigan. It all started
+                when Jeff decided to leave his career as a retirement advisor to
+                purchase and manage some of the very same resorts his family grew
+                up vacationing at each summer — Island View Resort in Hessel,
+                Michigan. Today, Island View still hosts Jeff and Jack&apos;s
+                family for its annual traditions and has expanded its guest list
+                to include syndicated shows such as the casts of Michigan Out of
+                Doors and Under the Radar.
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-timber/80 md:text-lg">
+                In 2022, Jeff and Jack closed on Papin&apos;s Resort, offering
+                its previous owners the opportunity to move to Florida and enjoy
+                retirement worry-free. In 2023, they expanded into hotels,
+                acquiring the Cedarville Hotel and Tahquamenon Suites Lodging.
+                The prior owner was able to retire and move south, and Jack
+                subsequently left his corporate finance career to pursue his
+                passion in real estate full-time.
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-timber/80 md:text-lg">
+                Today, JJ Properties operates five distinctive hotels, resorts,
+                and inns across Michigan&apos;s Upper Peninsula — each with its
+                own character, all united by a commitment to genuine U.P.
+                hospitality and a deep appreciation for the region&apos;s natural
+                beauty.
               </p>
             </div>
           </Reveal>

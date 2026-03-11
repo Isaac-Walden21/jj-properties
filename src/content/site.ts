@@ -13,21 +13,21 @@ export const site = {
 
   pages: {
     sell: {
-      headline: "Sell Your Property",
+      headline: "Sell Your Resort or Hotel",
       subheadline:
-        "Thinking of selling your hospitality property in the Upper Peninsula? We acquire well-positioned hotels, resorts, and inns that align with our portfolio. Let's talk about what your property is worth.",
-      cta: { label: "Start a Conversation", href: "/contact?type=sell" },
+        "If you're looking to sell your resort or hotel in Northern Michigan, you've come to the right place. JJ Properties specializes in acquiring hospitality properties across the Upper Peninsula — no agents, no fees, no hassle.",
+      cta: { label: "Get Your Offer", href: "/contact?type=sell" },
     },
     invest: {
-      headline: "Invest with JJ Properties",
+      headline: "Partner with Us",
       subheadline:
-        "Partner with an experienced hospitality team that knows the Upper Peninsula market. We offer strategic investment opportunities in a growing tourism region with proven demand and year-round appeal.",
-      cta: { label: "Learn More", href: "/contact?type=invest" },
+        "Beyond every acquisition, we aim to cultivate long-term partnerships. Whether you're an investor, a hospitality professional, or someone who shares our vision for the Upper Peninsula, we'd love to explore how we can work together.",
+      cta: { label: "Start a Conversation", href: "/contact?type=invest" },
     },
     about: {
       headline: "About JJ Properties",
       subheadline:
-        "Jack and Jeff built JJ Properties on a shared belief: the Upper Peninsula deserves world-class hospitality. With five properties and counting, we are committed to preserving the character of the U.P. while delivering memorable guest experiences.",
+        "Jeff and Jack are two cousins who left their corporate careers to combine their passions for real estate and Northern Michigan. What started with a single resort has grown into five distinctive properties across the Upper Peninsula.",
     },
     contact: {
       headline: "Get in Touch",

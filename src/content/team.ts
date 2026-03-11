@@ -2,15 +2,15 @@ import type { TeamMember } from "@/types";
 
 export const team: TeamMember[] = [
   {
-    name: "Jack",
-    role: "Co-Owner",
-    bio: "With years of hands-on experience in hospitality operations, Jack brings a deep understanding of what makes a great guest experience. His vision for Upper Peninsula tourism drives JJ Properties' growth, ensuring every property delivers warmth, quality, and authenticity. Jack oversees day-to-day operations across the portfolio and is passionate about preserving the character that makes the U.P. special.",
-    image: "/images/team/jack.jpg",
+    name: "Jeff",
+    role: "Co-Founder",
+    bio: "Six years ago, Jeff decided to leave his career as a retirement advisor to pursue his passion for Northern Michigan hospitality. He purchased and now manages the very same resorts his family grew up vacationing at each summer. Jeff's hands-on approach and deep love for the region drive every acquisition and renovation at JJ Properties.",
+    image: "/images/team/jeff.jpg",
   },
   {
-    name: "Jeff",
-    role: "Co-Owner",
-    bio: "Jeff's background in real estate and property development gives JJ Properties its strategic edge. From identifying acquisition opportunities to overseeing renovations, Jeff ensures each property in the portfolio is positioned for long-term success. His sharp eye for value and commitment to quality have been instrumental in building a hospitality brand that guests and investors trust.",
-    image: "/images/team/jeff.jpg",
+    name: "Jack",
+    role: "Co-Founder",
+    bio: "After years in corporate finance, Jack quit his job to join Jeff and pursue his passion for real estate full-time. Jack brings a sharp strategic eye to every deal, from identifying acquisition opportunities to overseeing property operations. Together, the cousins combine their complementary skills to build a hospitality brand rooted in the U.P.",
+    image: "/images/team/jack.jpg",
   },
 ];

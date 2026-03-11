@@ -10,28 +10,29 @@ export default function InvestPage() {
   return (
     <>
       <PageIntro
-        kicker="Invest"
+        kicker="Partner"
         title={site.pages.invest.headline}
         intro={site.pages.invest.subheadline}
       />
 
       <ValuePropSection
-        title="Why Invest in the U.P."
-        intro="Michigan's Upper Peninsula is one of the Midwest's best-kept secrets — and the tourism market is growing. Partnering with JJ Properties gives you access to a proven portfolio with experienced operators at the helm."
+        title="Why Partner with JJ Properties"
+        intro="Michigan's Upper Peninsula is one of the Midwest's best-kept secrets — and the tourism market is growing. Our commitment extends beyond the transaction. We remain dedicated to supporting our partners' success and fostering ongoing growth in the hospitality industry."
         benefits={[
           "Proven portfolio of revenue-generating properties",
           "Growing tourism market with year-round demand",
-          "Experienced operators with deep local knowledge",
-          "Flexible partnership structures",
-          "Transparent reporting and communication",
+          "Experienced operators with deep local knowledge and a hands-on approach",
+          "Flexible partnership structures tailored to your goals",
+          "Transparent reporting and open communication",
+          "Long-term commitment to mutual success",
         ]}
         ctaLabel={site.pages.invest.cta.label}
         ctaHref="/contact?type=invest"
       />
 
       <CTABanner
-        title="Let's Talk About the Opportunity"
-        description="We're always open to conversations with aligned investors who share our vision for Upper Peninsula hospitality."
+        title="Let's Explore the Opportunity"
+        description="We're always open to conversations with aligned partners who share our vision for Upper Peninsula hospitality. No matter where you are in the process, we'd love to hear from you."
         ctaLabel="Get in Touch"
         ctaHref="/contact?type=invest"
         variant="pine"

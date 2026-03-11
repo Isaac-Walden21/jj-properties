@@ -59,10 +59,10 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="tel:+19065550100"
+                href="tel:+12488944867"
                 className="transition-colors hover:text-amber"
               >
-                (906) 555-0100
+                (248) 894-4867
               </a>
             </li>
             <li className="text-cream/50">Upper Peninsula, Michigan</li>

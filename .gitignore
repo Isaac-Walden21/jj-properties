@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# old site reference
+/old-site
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
