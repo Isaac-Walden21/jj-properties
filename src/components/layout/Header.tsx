@@ -71,7 +71,7 @@ export function Header() {
           <img
             src="/logo.png"
             alt="JJ Properties — Commercial Real Estate, Upper Peninsula MI"
-            className="h-10 w-auto transition-transform group-hover:scale-[1.02] sm:h-12"
+            className="h-18 w-auto transition-transform group-hover:scale-[1.02] sm:h-20"
           />
         </Link>
 
@@ -86,7 +86,7 @@ export function Header() {
         </button>
 
         <nav className="hidden lg:block" aria-label="Main">
-          <ul className="flex items-center gap-5 text-[11px] font-semibold uppercase tracking-[0.12em] text-timber">
+          <ul className="flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.12em] text-timber">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
 

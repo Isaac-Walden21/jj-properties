@@ -13,7 +13,7 @@ export function Footer() {
             <img
               src="/logo.png"
               alt="JJ Properties"
-              className="h-12 w-auto brightness-0 invert"
+              className="h-18 w-auto sm:h-20"
             />
           </Link>
           <p className="text-sm leading-relaxed text-stone">
