@@ -8,6 +8,7 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { Bed, Building2, Handshake, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/content/site";
 
@@ -51,8 +52,14 @@ export function HeroSection() {
       ref={sectionRef}
       className="relative flex min-h-screen items-center justify-center overflow-hidden"
     >
-      {/* Background gradient placeholder (replace with image later) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-timber via-pine to-ink" />
+      {/* Background hero image */}
+      <Image
+        src="/jj-resort-properties-hero.jpg"
+        alt="Upper Peninsula lakefront resort"
+        fill
+        priority
+        className="absolute inset-0 object-cover"
+      />
 
       {/* Dark overlay */}
       <motion.div
