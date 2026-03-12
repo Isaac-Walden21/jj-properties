@@ -26,6 +26,10 @@ export default function HomePage() {
         ]}
         ctaLabel="Explore Properties"
         ctaHref="/properties"
+        image={{
+          src: "/JJ-resort-property-maps.png",
+          alt: "Map showing JJ Properties resort locations across Michigan's Upper Peninsula",
+        }}
       />
 
       {/* Sell to Us */}

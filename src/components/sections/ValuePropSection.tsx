@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Check } from "lucide-react";
 import Reveal from "@/components/motion/Reveal";
 import StaggerItems from "@/components/motion/StaggerItems";
@@ -11,6 +12,7 @@ interface ValuePropSectionProps {
   ctaLabel: string;
   ctaHref: string;
   reversed?: boolean;
+  image?: { src: string; alt: string };
 }
 
 export function ValuePropSection({
@@ -20,6 +22,7 @@ export function ValuePropSection({
   ctaLabel,
   ctaHref,
   reversed = false,
+  image,
 }: ValuePropSectionProps) {
   return (
     <section className="section-shell">
@@ -64,9 +67,20 @@ export function ValuePropSection({
             </Reveal>
           </div>
 
-          {/* Decorative gradient (image placeholder) */}
+          {/* Visual */}
           <Reveal delay={0.15}>
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-pine via-timber to-lake shadow-warm" />
+            {image ? (
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-warm">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-pine via-timber to-lake shadow-warm" />
+            )}
           </Reveal>
         </div>
       </div>
