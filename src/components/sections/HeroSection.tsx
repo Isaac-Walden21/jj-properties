@@ -110,7 +110,7 @@ export function HeroSection() {
             >
               <Link
                 href={funnel.href}
-                className="group flex h-full flex-row items-center gap-4 rounded-xl border border-cream/10 bg-cream/[0.07] px-5 py-5 text-left backdrop-blur-md transition-all duration-300 hover:border-amber/40 hover:bg-cream/[0.12] sm:flex-col sm:items-start sm:gap-3 sm:px-6 sm:py-6 sm:text-left"
+                className="group flex h-full flex-row items-center gap-4 rounded-xl border border-cream/20 bg-ink/60 px-5 py-5 text-left backdrop-blur-lg transition-all duration-300 hover:border-amber/40 hover:bg-ink/70 sm:flex-col sm:items-start sm:gap-3 sm:px-6 sm:py-6 sm:text-left"
               >
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-amber/20 text-amber transition-colors duration-300 group-hover:bg-amber/30 sm:h-12 sm:w-12">
                   <funnel.icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.5} />
