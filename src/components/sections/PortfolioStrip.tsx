@@ -1,17 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { properties } from "@/content/properties";
 import Reveal from "@/components/motion/Reveal";
-
-const gradientCombos = [
-  "from-pine via-timber to-lake",
-  "from-timber via-ink to-pine",
-  "from-lake via-pine to-timber",
-  "from-ink via-lake to-pine",
-  "from-timber via-pine to-ink",
-];
 
 export function PortfolioStrip() {
   return (
@@ -35,9 +28,8 @@ export function PortfolioStrip() {
         {/* Horizontal scroll container */}
         <Reveal delay={0.15}>
           <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-4 md:-mx-0 md:px-0">
-            {properties.map((property, index) => {
-              const gradient =
-                gradientCombos[index % gradientCombos.length];
+            {properties.map((property) => {
+              const heroImage = property.images.find((img) => img.featured) ?? property.images[0];
 
               return (
                 <Link
@@ -45,10 +37,18 @@ export function PortfolioStrip() {
                   href={`/properties/${property.slug}`}
                   className="sleek-lift w-80 shrink-0 snap-start overflow-hidden rounded-2xl border border-timber/10 bg-cream shadow-card"
                 >
-                  {/* Image placeholder */}
-                  <div
-                    className={`aspect-[4/3] bg-gradient-to-br ${gradient}`}
-                  />
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    {heroImage ? (
+                      <Image
+                        src={heroImage.src}
+                        alt={heroImage.alt}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-gradient-to-br from-pine via-timber to-lake" />
+                    )}
+                  </div>
 
                   {/* Content */}
                   <div className="p-4">

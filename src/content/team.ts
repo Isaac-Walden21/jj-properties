@@ -4,8 +4,8 @@ export const team: TeamMember[] = [
   {
     name: "Jeff",
     role: "Co-Founder",
-    bio: "Six years ago, Jeff decided to leave his career as a retirement advisor to pursue his passion for Northern Michigan hospitality. He purchased and now manages the very same resorts his family grew up vacationing at each summer. Jeff's hands-on approach and deep love for the region drive every acquisition and renovation at JJ Properties.",
-    image: "/images/team/jeff.jpg",
+    bio: "Six years ago, Jeff decided to leave his career as a retirement advisor to pursue his passion for Northern Michigan hospitality. He purchased and now manages the very same resorts his family grew up vacationing at each summer. Jeff's hands-on approach and deep love for the region drive every acquisition and renovation at JJ Resort Properties.",
+    image: "/jeff-lipple-headshot.jpg",
   },
   {
     name: "Jack",

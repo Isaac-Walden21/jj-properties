@@ -36,7 +36,7 @@ export async function sendContactEmail(
   }
 
   const inquiryLabel = capitalize(payload.inquiryType);
-  const subject = `[JJ Properties] ${inquiryLabel} Inquiry`;
+  const subject = `[JJ Resort Properties] ${inquiryLabel} Inquiry`;
 
   const lines = [
     `Request ID: ${requestId}`,

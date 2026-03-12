@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
@@ -70,15 +71,17 @@ export function PropertyGallery({
               key={image.src}
               layoutId={`gallery-${propertyName}-${index}`}
               onClick={() => openLightbox(index)}
-              className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${gradient} ${
+              className={`relative overflow-hidden rounded-xl ${
                 isFirst ? "col-span-2 row-span-2 aspect-[4/3]" : "aspect-square"
               } cursor-pointer transition-opacity hover:opacity-90`}
               aria-label={`View ${image.alt}`}
             >
-              <div className="absolute inset-0 bg-ink/10" />
-              <span className="absolute bottom-3 left-3 text-xs text-cream/70">
-                {image.alt}
-              </span>
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                className="object-cover"
+              />
             </motion.button>
           );
         })}
@@ -115,22 +118,19 @@ export function PropertyGallery({
               <ChevronLeft className="h-6 w-6" />
             </button>
 
-            {/* Active image placeholder */}
+            {/* Active image */}
             <motion.div
               key={lightboxIndex}
               layoutId={`gallery-${propertyName}-${lightboxIndex}`}
-              className={`mx-16 aspect-[4/3] w-full max-w-4xl overflow-hidden rounded-2xl bg-gradient-to-br ${
-                placeholderGradients[
-                  lightboxIndex % placeholderGradients.length
-                ]
-              }`}
+              className="relative mx-16 aspect-[4/3] w-full max-w-4xl overflow-hidden rounded-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex h-full items-center justify-center">
-                <p className="text-sm text-cream/60">
-                  {images[lightboxIndex].alt}
-                </p>
-              </div>
+              <Image
+                src={images[lightboxIndex].src}
+                alt={images[lightboxIndex].alt}
+                fill
+                className="object-cover"
+              />
             </motion.div>
 
             {/* Next button */}

@@ -24,7 +24,7 @@ export const properties: Property[] = [
     name: "Papin's Resort",
     tagline: "Where Lake Michigan meets the wild north",
     type: "resort",
-    location: "Naubinway, MI",
+    location: "Drummond, MI",
     description:
       "Nestled along the northern shores of Lake Michigan, Papin's Resort is a family-friendly waterfront destination that has welcomed guests for generations. Wake up to panoramic lake views, spend your days fishing, hiking nature trails, or simply unwinding by the campfire. With direct waterfront access and a private boat launch, Papin's is the quintessential Upper Peninsula escape.",
     highlights: [
@@ -44,7 +44,7 @@ export const properties: Property[] = [
     ],
     images: [
       {
-        src: "/images/properties/papins-resort/hero.jpg",
+        src: "/papins_resort.webp",
         alt: "Papin's Resort waterfront view on Lake Michigan",
         featured: true,
       },
@@ -65,7 +65,7 @@ export const properties: Property[] = [
     name: "Island View Resort",
     tagline: "Your window to the Les Cheneaux Islands",
     type: "resort",
-    location: "Hessel, MI",
+    location: "Cedarville, MI",
     description:
       "Overlooking the pristine Les Cheneaux Islands, Island View Resort offers a charming retreat where the water meets the wilderness. Whether you're docking at the marina, casting a line at dawn, or settling in for a home-cooked meal, every moment here feels like a postcard. Winter brings its own magic with snowshoeing, ice fishing, and crisp evenings by the fire.",
     highlights: [
@@ -85,7 +85,7 @@ export const properties: Property[] = [
     ],
     images: [
       {
-        src: "/images/properties/island-view-resort/hero.jpg",
+        src: "/island_view_resort.jpeg",
         alt: "Island View Resort overlooking the Les Cheneaux Islands",
         featured: true,
       },
@@ -104,11 +104,11 @@ export const properties: Property[] = [
   {
     slug: "waterway-inn",
     name: "Waterway Inn",
-    tagline: "Cozy comfort on the Cedarville waterway",
+    tagline: "Comfortable, dog-friendly lodging in Northern Michigan",
     type: "inn",
-    location: "Cedarville, MI",
+    location: "Indian River, MI",
     description:
-      "The Waterway Inn sits along one of Cedarville's most scenic stretches of water, offering guests a cozy and convenient base for exploring the eastern Upper Peninsula. Steps from downtown shops and restaurants, the inn combines small-town charm with comfortable accommodations. Start your morning with complimentary coffee, then head out to explore the islands, trails, and hidden gems nearby.",
+      "Comfortable, affordable lodging steps from Northern Michigan's best trails, lakes, and outdoor recreation. The Waterway Inn is owner-operated, dog-friendly, and trail-adjacent — the perfect base camp for exploring the Inland Waterway region. Whether you're hiking, kayaking, snowmobiling, or just slowing down for a few days, you'll feel right at home.",
     highlights: [
       "Prime downtown Cedarville location on the waterway",
       "Walking distance to shops, dining, and local attractions",
@@ -126,7 +126,7 @@ export const properties: Property[] = [
     ],
     images: [
       {
-        src: "/images/properties/waterway-inn/hero.jpg",
+        src: "/waterway-inn.jpg",
         alt: "Waterway Inn along the Cedarville waterway",
         featured: true,
       },
@@ -147,7 +147,7 @@ export const properties: Property[] = [
     name: "Tahquamenon Suites",
     tagline: "Modern comfort at the edge of the wilderness",
     type: "suites",
-    location: "Newberry, MI",
+    location: "Paradise, MI",
     description:
       "Just minutes from the thundering Tahquamenon Falls, Tahquamenon Suites delivers a modern lodging experience in the heart of the Upper Peninsula's most iconic landscape. Each suite features a kitchenette, smart TV, and everything you need for a comfortable extended stay. Step outside and you're surrounded by state parks, hiking trails, and some of the most breathtaking scenery in the Midwest.",
     highlights: [
@@ -167,7 +167,7 @@ export const properties: Property[] = [
     ],
     images: [
       {
-        src: "/images/properties/tahquamenon-suites/hero.jpg",
+        src: "/tahquamenon_suites.jpeg",
         alt: "Tahquamenon Suites exterior near the falls",
         featured: true,
       },
@@ -208,7 +208,7 @@ export const properties: Property[] = [
     ],
     images: [
       {
-        src: "/images/properties/cedarville-hotel/hero.jpg",
+        src: "/cedarville_hotel.png",
         alt: "Cedarville Hotel historic exterior in downtown Cedarville",
         featured: true,
       },

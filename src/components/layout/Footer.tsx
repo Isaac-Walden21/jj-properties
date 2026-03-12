@@ -12,7 +12,7 @@ export function Footer() {
           <Link href="/">
             <img
               src="/logo.png"
-              alt="JJ Properties"
+              alt="JJ Resort Properties"
               className="h-28 w-auto sm:h-32"
             />
           </Link>

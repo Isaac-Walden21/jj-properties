@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { createPageMetadata } from "@/lib/seo";
 import { site } from "@/content/site";
 import { team } from "@/content/team";
@@ -17,12 +18,40 @@ export default function AboutPage() {
         intro={site.pages.about.subheadline}
       />
 
+      {/* Team */}
+      <section className="section-shell bg-birch">
+        <div className="grid-shell">
+          <Reveal>
+            <h2 className="font-display mb-10 text-center text-3xl font-semibold text-timber md:text-4xl">
+              Meet the Team
+            </h2>
+          </Reveal>
+
+          <Reveal>
+            <div className="relative mx-auto mb-10 aspect-[16/9] max-w-4xl overflow-hidden rounded-2xl border border-timber/10 shadow-card">
+              <Image
+                src="/jeff-jack.jpg"
+                alt="Jeff and Jack"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </Reveal>
+
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
+            {team.map((member) => (
+              <TeamBio key={member.name} member={member} showImage={false} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Our Story */}
       <section className="section-shell">
         <div className="grid-shell">
           <Reveal>
             <div className="mx-auto max-w-3xl">
-              <h2 className="font-display text-3xl font-semibold text-timber md:text-4xl">
+              <h2 className="font-display text-center text-3xl font-semibold text-timber md:text-4xl">
                 Our Story
               </h2>
               <p className="mt-6 text-base leading-relaxed text-timber/80 md:text-lg">
@@ -46,7 +75,7 @@ export default function AboutPage() {
                 passion in real estate full-time.
               </p>
               <p className="mt-4 text-base leading-relaxed text-timber/80 md:text-lg">
-                Today, JJ Properties operates five distinctive hotels, resorts,
+                Today, JJ Resort Properties operates five distinctive hotels, resorts,
                 and inns across Michigan&apos;s Upper Peninsula — each with its
                 own character, all united by a commitment to genuine U.P.
                 hospitality and a deep appreciation for the region&apos;s natural
@@ -54,23 +83,6 @@ export default function AboutPage() {
               </p>
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="section-shell bg-birch">
-        <div className="grid-shell">
-          <Reveal>
-            <h2 className="font-display mb-10 text-center text-3xl font-semibold text-timber md:text-4xl">
-              Meet the Team
-            </h2>
-          </Reveal>
-
-          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
-            {team.map((member) => (
-              <TeamBio key={member.name} member={member} />
-            ))}
-          </div>
         </div>
       </section>
 

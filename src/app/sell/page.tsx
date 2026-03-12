@@ -62,7 +62,7 @@ export default function SellPage() {
       />
 
       <ValuePropSection
-        title="Why Sell to JJ Properties"
+        title="Why Sell to JJ Resort Properties"
         intro="With ownership of multiple resorts and hotels, we have a proven track record of successfully acquiring and operating hospitality properties. We understand the unique challenges of running a hospitality business and are committed to preserving the hard work you've invested in building your property's reputation."
         benefits={[
           "No broker fees or hidden costs — ever",
