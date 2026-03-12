@@ -58,7 +58,7 @@ export function HeroSection() {
         alt="Upper Peninsula lakefront resort"
         fill
         priority
-        className="absolute inset-0 object-cover"
+        className="absolute inset-0 object-cover object-right sm:object-center"
       />
 
       {/* Dark overlay */}

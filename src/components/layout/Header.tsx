@@ -71,7 +71,7 @@ export function Header() {
           <img
             src="/logo.png"
             alt="JJ Resort Properties — Commercial Real Estate, Upper Peninsula MI"
-            className="-mb-4 mt-1 h-28 w-auto transition-transform group-hover:scale-[1.02] sm:h-32"
+            className="-mb-4 mt-1 h-16 w-auto transition-transform group-hover:scale-[1.02] sm:h-32"
           />
         </Link>
 
