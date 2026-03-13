@@ -17,7 +17,7 @@ export default function HomePage() {
       {/* Stay with Us */}
       <ValuePropSection
         title="Stay with Us"
-        intro="Five distinctive properties across Michigan's Upper Peninsula — from lakefront resorts on Lake Michigan to historic inns in the heart of Cedarville. Each one offers genuine U.P. hospitality and a connection to the region's natural beauty."
+        intro="Five properties across Michigan's Upper Peninsula — from island resorts to small-town inns. Each one offers genuine U.P. hospitality and a connection to the region's natural beauty."
         benefits={[
           "Waterfront resorts, cozy inns, and modern suites",
           "Year-round activities from fishing to snowshoeing",

@@ -16,7 +16,7 @@ const funnels = [
   {
     icon: Bed,
     title: "Stay with Us",
-    tagline: "Lakefront resorts & historic inns across the U.P.",
+    tagline: "Resorts, hotels, and inns across the U.P.",
     href: "/properties",
   },
   {
@@ -77,6 +77,17 @@ export function HeroSection() {
         className="relative z-10 w-full max-w-6xl px-6 text-center"
         style={prefersReducedMotion ? {} : { y: textY }}
       >
+        <motion.p
+          className="font-display mb-4 flex items-center justify-center gap-4 text-base font-medium uppercase tracking-[0.3em] text-cream md:text-lg"
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <span className="h-px w-10 bg-cream/50 md:w-16" />
+          {site.name}
+          <span className="h-px w-10 bg-cream/50 md:w-16" />
+        </motion.p>
+
         <motion.h1
           className="font-display mx-auto max-w-4xl text-4xl font-bold uppercase tracking-tight text-cream md:text-5xl lg:text-6xl"
           initial={prefersReducedMotion ? false : { opacity: 0, y: 40 }}

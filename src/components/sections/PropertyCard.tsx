@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { MapPin } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import type { Property } from "@/types";
@@ -12,8 +11,10 @@ export function PropertyCard({ property }: PropertyCardProps) {
   const heroImage = property.images.find((img) => img.featured) ?? property.images[0];
 
   return (
-    <Link
-      href={`/properties/${property.slug}`}
+    <a
+      href={property.externalUrl}
+      target="_blank"
+      rel="noopener noreferrer"
       className="sleek-lift group block overflow-hidden rounded-2xl border border-timber/10 bg-cream shadow-card"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -45,6 +46,6 @@ export function PropertyCard({ property }: PropertyCardProps) {
 
         <p className="mt-1 text-sm text-stone">{property.tagline}</p>
       </div>
-    </Link>
+    </a>
   );
 }

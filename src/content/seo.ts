@@ -10,7 +10,7 @@ export const seoByRoute: Record<string, PageSEO> = {
   "/properties": {
     title: "Our Properties | JJ Resort Properties",
     description:
-      "Browse the JJ Resort Properties portfolio — from lakefront resorts on Lake Michigan to cozy inns in Cedarville. Find your perfect Upper Peninsula getaway.",
+      "Browse the JJ Resort Properties portfolio — resorts, hotels, and inns across Michigan's Upper Peninsula. Find your perfect U.P. getaway.",
     ogImage: "/logo.png",
   },
   "/about": {

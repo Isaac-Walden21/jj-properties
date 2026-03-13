@@ -139,8 +139,8 @@ export const properties: Property[] = [
         alt: "Waterway Inn waterway view from the porch",
       },
     ],
-    bookingUrl: "https://waterwayinn.com",
-    externalUrl: "https://waterwayinn.com",
+    bookingUrl: "https://waterwayinnir.com",
+    externalUrl: "https://waterwayinnir.com",
   },
   {
     slug: "tahquamenon-suites",

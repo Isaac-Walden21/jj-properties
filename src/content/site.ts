@@ -6,7 +6,7 @@ export const site = {
   hero: {
     headline: "Experience Michigan's Upper Peninsula",
     subheadline:
-      "Five distinctive properties across the U.P. — from lakefront resorts to historic inns. Your next great escape starts here.",
+      "Five properties across the Upper Peninsula — and we're always looking for the next one.",
     cta: { label: "Explore Properties", href: "/properties" },
     secondaryCta: { label: "Contact Us", href: "/contact" },
   },
