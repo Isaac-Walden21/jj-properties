@@ -49,36 +49,4 @@ export const seoByRoute: Record<string, PageSEO> = {
       "The page you're looking for doesn't exist. Head back to JJ Resort Properties to explore our Upper Peninsula hospitality portfolio.",
     ogImage: "/logo.png",
   },
-
-  // Per-property SEO
-  "/properties/papins-resort": {
-    title: "Papin's Resort — Naubinway, MI | JJ Resort Properties",
-    description:
-      "Family-friendly waterfront resort on the shores of Lake Michigan in Naubinway. Fishing, nature trails, campfire pits, and private boat launch at Papin's Resort.",
-    ogImage: "/logo.png",
-  },
-  "/properties/island-view-resort": {
-    title: "Island View Resort — Hessel, MI | JJ Resort Properties",
-    description:
-      "Charming resort overlooking the Les Cheneaux Islands in Hessel. Marina access, on-site dining, fishing, and year-round activities at Island View Resort.",
-    ogImage: "/logo.png",
-  },
-  "/properties/waterway-inn": {
-    title: "Waterway Inn — Cedarville, MI | JJ Resort Properties",
-    description:
-      "Cozy inn along the scenic Cedarville waterway. Downtown location, complimentary coffee, and easy access to Les Cheneaux Islands exploration at Waterway Inn.",
-    ogImage: "/logo.png",
-  },
-  "/properties/tahquamenon-suites": {
-    title: "Tahquamenon Suites — Newberry, MI | JJ Resort Properties",
-    description:
-      "Modern suites minutes from Tahquamenon Falls in Newberry. Kitchenettes, smart TVs, free parking, and state park access at Tahquamenon Suites.",
-    ogImage: "/logo.png",
-  },
-  "/properties/cedarville-hotel": {
-    title: "Cedarville Hotel — Cedarville, MI | JJ Resort Properties",
-    description:
-      "Historic, recently renovated hotel in the heart of downtown Cedarville. Marina access, dining nearby, and Les Cheneaux Islands at your doorstep.",
-    ogImage: "/logo.png",
-  },
 };

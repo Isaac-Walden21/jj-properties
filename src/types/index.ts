@@ -1,28 +1,12 @@
-import type { LucideIcon } from "lucide-react";
-
 export interface Property {
   slug: string;
   name: string;
   tagline: string;
   type: "resort" | "hotel" | "inn" | "suites";
   location: string;
-  description: string;
-  highlights: string[];
-  amenities: Amenity[];
-  images: PropertyImage[];
+  image: { src: string; alt: string };
   bookingUrl?: string;
   externalUrl?: string;
-}
-
-export interface Amenity {
-  icon: LucideIcon;
-  label: string;
-}
-
-export interface PropertyImage {
-  src: string;
-  alt: string;
-  featured?: boolean;
 }
 
 export interface TeamMember {

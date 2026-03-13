@@ -8,8 +8,6 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property }: PropertyCardProps) {
-  const heroImage = property.images.find((img) => img.featured) ?? property.images[0];
-
   return (
     <a
       href={property.externalUrl}
@@ -18,16 +16,12 @@ export function PropertyCard({ property }: PropertyCardProps) {
       className="sleek-lift group block overflow-hidden rounded-2xl border border-timber/10 bg-cream shadow-card"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
-        {heroImage ? (
-          <Image
-            src={heroImage.src}
-            alt={heroImage.alt}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        ) : (
-          <div className="h-full w-full bg-gradient-to-br from-pine via-timber to-lake" />
-        )}
+        <Image
+          src={property.image.src}
+          alt={property.image.alt}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+        />
       </div>
 
       {/* Content */}
