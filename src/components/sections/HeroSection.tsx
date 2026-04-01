@@ -14,13 +14,13 @@ import { site } from "@/content/site";
 import { properties } from "@/content/properties";
 
 const heroImages = [
-  { src: "/hero/hero-1.jpg", alt: "Lakeside vacation on Mackinac Island" },
-  { src: "/hero/hero-2.jpg", alt: "Northern Michigan resort scenery" },
-  { src: "/hero/hero-3.jpg", alt: "Upper Peninsula waterfront" },
-  { src: "/hero/hero-4.jpg", alt: "Aerial view of Les Cheneaux Islands" },
+  { src: "/hero/hero-1.jpg", alt: "Lakeside vacation on Mackinac Island", position: "center" },
+  { src: "/hero/hero-2.jpg", alt: "Northern Michigan resort scenery", position: "center bottom" },
+  { src: "/hero/hero-3.jpg", alt: "Upper Peninsula waterfront", position: "center" },
+  { src: "/hero/hero-4.jpg", alt: "Aerial view of Les Cheneaux Islands", position: "center" },
 ];
 
-const SLIDE_INTERVAL = 6000;
+const SLIDE_INTERVAL = 7000;
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -39,6 +39,10 @@ export function HeroSection() {
 
   const advance = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % heroImages.length);
+  }, []);
+
+  const jumpTo = useCallback((index: number) => {
+    setCurrentIndex(index);
   }, []);
 
   useEffect(() => {
@@ -60,7 +64,7 @@ export function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
+          transition={{ duration: 1.8, ease: "easeInOut" }}
         >
           <Image
             src={heroImages[currentIndex].src}
@@ -68,6 +72,7 @@ export function HeroSection() {
             fill
             priority={currentIndex === 0}
             className="object-cover"
+            style={{ objectPosition: heroImages[currentIndex].position }}
             sizes="100vw"
           />
         </motion.div>
@@ -117,6 +122,30 @@ export function HeroSection() {
         >
           {hero.subheadline}
         </motion.p>
+
+        {/* Progress indicator */}
+        <div className="mx-auto mt-8 flex items-center justify-center gap-2">
+          {heroImages.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => jumpTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className="relative h-1.5 w-8 overflow-hidden rounded-full bg-sand/30 transition-colors duration-300"
+            >
+              {i === currentIndex && !prefersReducedMotion ? (
+                <span
+                  key={currentIndex}
+                  className="absolute inset-0 origin-left rounded-full bg-sand"
+                  style={{
+                    animation: `progress-fill ${SLIDE_INTERVAL}ms linear forwards`,
+                  }}
+                />
+              ) : i === currentIndex ? (
+                <span className="absolute inset-0 rounded-full bg-sand" />
+              ) : null}
+            </button>
+          ))}
+        </div>
 
         {/* Property bubbles */}
         <motion.div

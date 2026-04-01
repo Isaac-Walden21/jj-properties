@@ -28,6 +28,11 @@
   50% { transform: translateY(-10px); }
 }
 
+@keyframes progress-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 @layer base {
   * {
     box-sizing: border-box;
