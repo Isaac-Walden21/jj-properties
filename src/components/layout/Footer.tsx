@@ -49,10 +49,10 @@ export function Footer() {
           <ul className="flex flex-col gap-2 text-sm text-sand/70">
             <li>
               <a
-                href="mailto:info@jjproperties.com"
+                href="mailto:JJResortProperties@gmail.com"
                 className="transition-colors hover:text-gold"
               >
-                info@jjproperties.com
+                JJResortProperties@gmail.com
               </a>
             </li>
             <li>

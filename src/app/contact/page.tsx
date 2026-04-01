@@ -56,10 +56,10 @@ export default function ContactPage() {
                     <div>
                       <p className="font-medium text-navy">Email</p>
                       <a
-                        href="mailto:info@jjproperties.com"
+                        href="mailto:JJResortProperties@gmail.com"
                         className="text-sm text-navy/70 transition-colors hover:text-gold"
                       >
-                        info@jjproperties.com
+                        JJResortProperties@gmail.com
                       </a>
                     </div>
                   </div>
