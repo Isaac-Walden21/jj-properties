@@ -1,7 +1,6 @@
 import { createPageMetadata } from "@/lib/seo";
 import { site } from "@/content/site";
 import { HeroSection } from "@/components/sections/HeroSection";
-import { PortfolioStrip } from "@/components/sections/PortfolioStrip";
 import { ValuePropSection } from "@/components/sections/ValuePropSection";
 import { CTABanner } from "@/components/sections/CTABanner";
 
@@ -11,8 +10,6 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-
-      <PortfolioStrip />
 
       {/* Stay with Us */}
       <ValuePropSection

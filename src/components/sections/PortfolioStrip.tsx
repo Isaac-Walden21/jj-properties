@@ -13,12 +13,12 @@ export function PortfolioStrip() {
         <Reveal>
           {/* Header */}
           <div className="mb-8 flex items-end justify-between">
-            <h2 className="font-display text-4xl font-semibold text-timber md:text-5xl">
+            <h2 className="font-display text-4xl font-semibold text-navy md:text-5xl">
               Our Properties
             </h2>
             <Link
               href="/properties"
-              className="text-sm font-semibold uppercase tracking-wider text-amber transition-colors hover:text-amber-dark"
+              className="text-sm font-semibold uppercase tracking-wider text-gold transition-colors hover:text-gold-dark"
             >
               View All
             </Link>
@@ -34,7 +34,7 @@ export function PortfolioStrip() {
                   href={property.externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="sleek-lift w-80 shrink-0 snap-start overflow-hidden rounded-2xl border border-timber/10 bg-cream shadow-card"
+                  className="sleek-lift w-80 shrink-0 snap-start overflow-hidden rounded-2xl border border-navy/10 bg-sand shadow-card"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
@@ -47,7 +47,7 @@ export function PortfolioStrip() {
 
                   {/* Content */}
                   <div className="p-4">
-                    <h3 className="font-display text-xl text-timber">
+                    <h3 className="font-display text-xl text-navy">
                       {property.name}
                     </h3>
                     <p className="mt-1 text-sm text-stone">

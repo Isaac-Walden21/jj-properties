@@ -17,11 +17,11 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       <div className="w-full">
         <label
           htmlFor={inputId}
-          className="mb-1 block text-sm font-semibold tracking-wide text-timber"
+          className="mb-1 block text-sm font-semibold tracking-wide text-navy"
         >
           {label}
           {requiredLabel && (
-            <span className="ml-1 text-amber" aria-hidden="true">
+            <span className="ml-1 text-gold" aria-hidden="true">
               *
             </span>
           )}
@@ -32,10 +32,10 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           aria-invalid={!!error}
           aria-describedby={error ? `${inputId}-error` : undefined}
           className={cn(
-            "w-full border-b-2 border-stone/40 bg-birch/50 px-1 py-2",
+            "w-full border-b-2 border-stone/40 bg-sand-light/50 px-1 py-2",
             "text-ink placeholder:text-stone/60",
             "transition-colors duration-200",
-            "focus:border-amber focus:outline-none",
+            "focus:border-gold focus:outline-none",
             error && "border-red-500",
             className
           )}

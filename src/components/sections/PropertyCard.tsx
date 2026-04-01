@@ -13,7 +13,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
       href={property.externalUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="sleek-lift group block overflow-hidden rounded-2xl border border-timber/10 bg-cream shadow-card"
+      className="sleek-lift group block overflow-hidden rounded-2xl border border-navy/10 bg-sand shadow-card"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
@@ -34,7 +34,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
           </span>
         </div>
 
-        <h3 className="font-display text-2xl text-timber">
+        <h3 className="font-display text-2xl text-navy">
           {property.name}
         </h3>
 

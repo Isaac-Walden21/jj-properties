@@ -62,21 +62,19 @@ export function Header() {
         "sticky top-0 z-50 border-b transition-all duration-300 will-change-transform",
         hidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100",
         scrolled
-          ? "border-timber/10 bg-cream/90 backdrop-blur-lg"
-          : "border-transparent bg-cream/55 backdrop-blur-sm"
+          ? "border-navy/10 bg-sand/90 backdrop-blur-lg"
+          : "border-transparent bg-sand/55 backdrop-blur-sm"
       )}
     >
-      <div className="mx-auto flex w-[min(1500px,92vw)] items-center justify-between gap-6 py-4">
+      <div className="mx-auto flex w-[min(1500px,92vw)] items-center justify-between gap-6 py-3">
         <Link href="/" className="group shrink-0">
-          <img
-            src="/logo.png"
-            alt="JJ Resort Properties — Commercial Real Estate, Upper Peninsula MI"
-            className="-mb-4 mt-1 h-16 w-auto transition-transform group-hover:scale-[1.02] sm:h-32"
-          />
+          <span className="font-display text-lg font-bold tracking-tight text-navy transition-colors group-hover:text-gold sm:text-xl">
+            JJ Properties
+          </span>
         </Link>
 
         <button
-          className="rounded-full border border-timber/25 p-2 text-timber lg:hidden"
+          className="rounded-full border border-navy/25 p-2 text-navy lg:hidden"
           onClick={() => setOpen((prev) => !prev)}
           aria-label="Toggle navigation"
           aria-expanded={open}
@@ -86,7 +84,7 @@ export function Header() {
         </button>
 
         <nav className="hidden lg:block" aria-label="Main">
-          <ul className="flex items-center gap-5 text-sm font-semibold uppercase tracking-[0.12em] text-timber">
+          <ul className="flex items-center gap-5 text-sm font-semibold uppercase tracking-[0.12em] text-navy">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
 
@@ -95,8 +93,8 @@ export function Header() {
                   <Link
                     href={item.href}
                     className={cn(
-                      "relative py-1 transition-colors hover:text-amber after:absolute after:-bottom-0.5 after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-amber after:transition-transform after:duration-300 after:content-[''] hover:after:scale-x-100",
-                      isActive ? "text-amber" : "text-timber"
+                      "relative py-1 transition-colors hover:text-gold after:absolute after:-bottom-0.5 after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-300 after:content-[''] hover:after:scale-x-100",
+                      isActive ? "text-gold" : "text-navy"
                     )}
                   >
                     {item.label}
@@ -111,7 +109,7 @@ export function Header() {
       <nav
         id="mobile-nav"
         className={cn(
-          "overflow-hidden border-t border-timber/10 bg-cream transition-all duration-300 lg:hidden",
+          "overflow-hidden border-t border-navy/10 bg-sand transition-all duration-300 lg:hidden",
           open ? "max-h-[70vh]" : "max-h-0"
         )}
         aria-label="Mobile"
@@ -127,8 +125,8 @@ export function Header() {
                   className={cn(
                     "block rounded-md px-3 py-2 text-sm font-medium",
                     isActive
-                      ? "bg-timber text-cream"
-                      : "text-timber hover:bg-timber/5"
+                      ? "bg-navy text-sand"
+                      : "text-navy hover:bg-navy/5"
                   )}
                 >
                   {item.label}
@@ -141,7 +139,7 @@ export function Header() {
 
       <motion.div
         aria-hidden
-        className="h-[2px] origin-left bg-gradient-to-r from-amber via-[#e0a060] to-amber/40"
+        className="h-[2px] origin-left bg-gradient-to-r from-gold via-[#e0a060] to-gold/40"
         style={{ scaleX: progressScaleX }}
       />
     </header>

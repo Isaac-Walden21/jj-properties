@@ -4,7 +4,7 @@ export const site = {
   siteUrl: "https://www.jjproperties.com",
 
   hero: {
-    headline: "Experience Michigan's Upper Peninsula",
+    headline: "Experience Northern Michigan",
     subheadline:
       "Five properties across the Upper Peninsula — and we're always looking for the next one.",
     cta: { label: "Explore Properties", href: "/properties" },

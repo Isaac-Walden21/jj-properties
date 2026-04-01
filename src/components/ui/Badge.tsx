@@ -10,9 +10,9 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  type: "bg-pine text-cream",
-  status: "bg-amber text-cream",
-  default: "bg-stone text-cream",
+  type: "bg-teal text-sand",
+  status: "bg-gold text-sand",
+  default: "bg-stone text-sand",
 };
 
 export default function Badge({

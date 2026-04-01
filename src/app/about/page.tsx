@@ -19,16 +19,16 @@ export default function AboutPage() {
       />
 
       {/* Team */}
-      <section className="section-shell bg-birch">
+      <section className="section-shell bg-sand-light">
         <div className="grid-shell">
           <Reveal>
-            <h2 className="font-display mb-10 text-center text-3xl font-semibold text-timber md:text-4xl">
+            <h2 className="font-display mb-10 text-center text-3xl font-semibold text-navy md:text-4xl">
               Meet the Team
             </h2>
           </Reveal>
 
           <Reveal>
-            <div className="relative mx-auto mb-10 aspect-[16/9] max-w-4xl overflow-hidden rounded-2xl border border-timber/10 shadow-card">
+            <div className="relative mx-auto mb-10 aspect-[16/9] max-w-4xl overflow-hidden rounded-2xl border border-navy/10 shadow-card">
               <Image
                 src="/jeff-jack.jpg"
                 alt="Jeff and Jack"
@@ -51,10 +51,10 @@ export default function AboutPage() {
         <div className="grid-shell">
           <Reveal>
             <div className="mx-auto max-w-3xl">
-              <h2 className="font-display text-center text-3xl font-semibold text-timber md:text-4xl">
+              <h2 className="font-display text-center text-3xl font-semibold text-navy md:text-4xl">
                 Our Story
               </h2>
-              <p className="mt-6 text-base leading-relaxed text-timber/80 md:text-lg">
+              <p className="mt-6 text-base leading-relaxed text-navy/80 md:text-lg">
                 Jeff and Jack are no strangers to acquiring and successfully
                 managing vacation properties in Northern Michigan. It all started
                 when Jeff decided to leave his career as a retirement advisor to
@@ -65,7 +65,7 @@ export default function AboutPage() {
                 to include syndicated shows such as the casts of Michigan Out of
                 Doors and Under the Radar.
               </p>
-              <p className="mt-4 text-base leading-relaxed text-timber/80 md:text-lg">
+              <p className="mt-4 text-base leading-relaxed text-navy/80 md:text-lg">
                 In 2022, Jeff and Jack closed on Papin&apos;s Resort, offering
                 its previous owners the opportunity to move to Florida and enjoy
                 retirement worry-free. In 2023, they expanded into hotels,
@@ -74,7 +74,7 @@ export default function AboutPage() {
                 subsequently left his corporate finance career to pursue his
                 passion in real estate full-time.
               </p>
-              <p className="mt-4 text-base leading-relaxed text-timber/80 md:text-lg">
+              <p className="mt-4 text-base leading-relaxed text-navy/80 md:text-lg">
                 Today, JJ Resort Properties operates five distinctive hotels, resorts,
                 and inns across Michigan&apos;s Upper Peninsula — each with its
                 own character, all united by a commitment to genuine U.P.
@@ -91,7 +91,7 @@ export default function AboutPage() {
         description="Whether you have a property to sell or want to explore investment opportunities, we'd love to hear from you."
         ctaLabel="Start a Conversation"
         ctaHref="/contact"
-        variant="pine"
+        variant="navy"
       />
     </>
   );

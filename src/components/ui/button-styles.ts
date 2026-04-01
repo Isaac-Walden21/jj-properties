@@ -4,13 +4,13 @@ export type ButtonVariant = "primary" | "secondary" | "outline-light" | "light";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-amber text-cream border-2 border-amber hover:bg-amber-dark hover:border-amber-dark",
+  primary: "bg-gold text-sand border-2 border-gold hover:bg-gold-dark hover:border-gold-dark",
   secondary:
-    "border-2 border-timber text-timber bg-transparent hover:bg-timber hover:text-cream",
+    "border-2 border-navy text-navy bg-transparent hover:bg-navy hover:text-sand",
   "outline-light":
-    "border-2 border-cream text-cream bg-transparent hover:bg-cream hover:text-timber",
+    "border-2 border-sand text-sand bg-transparent hover:bg-sand hover:text-navy",
   light:
-    "bg-cream text-amber border-2 border-cream hover:bg-amber hover:text-cream hover:border-amber",
+    "bg-sand text-gold border-2 border-sand hover:bg-gold hover:text-sand hover:border-gold",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -33,7 +33,7 @@ export function buttonStyles({
     "rounded-full font-semibold uppercase tracking-wider",
     "transition-colors duration-300",
     "cinematic-glow button-sheen",
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold",
     variantStyles[variant],
     sizeStyles[size],
     className

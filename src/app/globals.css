@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-timber: #3b2a1a;
-  --color-timber-light: #5a3f28;
-  --color-amber: #c67a2e;
-  --color-amber-dark: #a86524;
-  --color-pine: #2d4a3e;
-  --color-pine-light: #3d6454;
-  --color-stone: #8b7d6b;
-  --color-cream: #faf6f0;
-  --color-birch: #f0e8db;
-  --color-lake: #4a7c8a;
-  --color-ink: #1a150f;
+  --color-navy: #1F3A5F;
+  --color-navy-light: #2B4F7A;
+  --color-gold: #C9A96E;
+  --color-gold-dark: #B8965A;
+  --color-teal: #4FA3A5;
+  --color-teal-light: #6BB8B9;
+  --color-stone: #8B8680;
+  --color-sand: #F4EFEA;
+  --color-sand-light: #FAF7F4;
+  --color-lake: #4FA3A5;
+  --color-ink: #1A2340;
 
   --font-display: var(--font-playfair-display);
   --font-body: var(--font-source-sans-3);
 
-  --shadow-glow: 0 0 24px rgba(198, 122, 46, 0.4);
-  --shadow-warm: 0 10px 30px rgba(59, 42, 26, 0.12);
-  --shadow-card: 0 4px 16px rgba(59, 42, 26, 0.08);
+  --shadow-glow: 0 0 24px rgba(201, 169, 110, 0.4);
+  --shadow-warm: 0 10px 30px rgba(31, 58, 95, 0.12);
+  --shadow-card: 0 4px 16px rgba(31, 58, 95, 0.08);
 
   --animate-drift-slow: drift-slow 6s ease-in-out infinite;
 }
@@ -44,9 +44,9 @@
     color: var(--color-ink);
     font-family: var(--font-body);
     background:
-      radial-gradient(circle at top right, rgba(45, 74, 62, 0.08), transparent 42%),
-      radial-gradient(circle at bottom left, rgba(198, 122, 46, 0.06), transparent 55%),
-      linear-gradient(160deg, var(--color-cream) 0%, var(--color-birch) 100%);
+      radial-gradient(circle at top right, rgba(79, 163, 165, 0.08), transparent 42%),
+      radial-gradient(circle at bottom left, rgba(201, 169, 110, 0.06), transparent 55%),
+      linear-gradient(160deg, var(--color-sand) 0%, var(--color-sand-light) 100%);
   }
 
   a {
@@ -89,7 +89,7 @@
   inset: -1px;
   z-index: -1;
   border-radius: inherit;
-  background: linear-gradient(120deg, rgba(198, 122, 46, 0.6), rgba(45, 74, 62, 0.35));
+  background: linear-gradient(120deg, rgba(201, 169, 110, 0.6), rgba(79, 163, 165, 0.35));
   opacity: 0;
   transition: opacity 300ms ease-in-out;
 }
@@ -123,8 +123,8 @@
 
 .sleek-lift:hover {
   transform: translateY(-6px);
-  box-shadow: 0 14px 28px rgba(59, 42, 26, 0.14);
-  border-color: rgba(198, 122, 46, 0.5);
+  box-shadow: 0 14px 28px rgba(31, 58, 95, 0.14);
+  border-color: rgba(201, 169, 110, 0.5);
 }
 
 /* Button sheen sweep */

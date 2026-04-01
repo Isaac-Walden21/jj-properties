@@ -35,7 +35,7 @@ export default function InvestPage() {
         description="We're always open to conversations with aligned partners who share our vision for Upper Peninsula hospitality. No matter where you are in the process, we'd love to hear from you."
         ctaLabel="Get in Touch"
         ctaHref="/contact?type=invest"
-        variant="pine"
+        variant="navy"
       />
     </>
   );

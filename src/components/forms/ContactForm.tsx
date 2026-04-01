@@ -84,7 +84,7 @@ export function ContactForm() {
     <form
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      className="rounded-2xl border border-timber/10 bg-cream p-6 shadow-card"
+      className="rounded-2xl border border-navy/10 bg-sand p-6 shadow-card"
     >
       {serverError && (
         <div

@@ -7,12 +7,12 @@ interface CTABannerProps {
   description: string;
   ctaLabel: string;
   ctaHref: string;
-  variant?: "timber" | "pine";
+  variant?: "navy" | "teal";
 }
 
-const variantStyles: Record<"timber" | "pine", string> = {
-  timber: "bg-timber text-cream",
-  pine: "bg-pine text-cream",
+const variantStyles: Record<"navy" | "teal", string> = {
+  navy: "bg-navy text-sand",
+  teal: "bg-teal text-sand",
 };
 
 export function CTABanner({
@@ -20,7 +20,7 @@ export function CTABanner({
   description,
   ctaLabel,
   ctaHref,
-  variant = "timber",
+  variant = "navy",
 }: CTABannerProps) {
   return (
     <section className="section-shell">

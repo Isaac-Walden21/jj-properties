@@ -36,11 +36,11 @@ export function ValuePropSection({
           {/* Text content */}
           <div>
             <Reveal>
-              <h2 className="font-display text-4xl font-semibold text-timber md:text-5xl">
+              <h2 className="font-display text-4xl font-semibold text-navy md:text-5xl">
                 {title}
               </h2>
 
-              <p className="text-balance mt-4 max-w-xl text-base text-timber/80 md:text-lg">
+              <p className="text-balance mt-4 max-w-xl text-base text-navy/80 md:text-lg">
                 {intro}
               </p>
             </Reveal>
@@ -48,10 +48,10 @@ export function ValuePropSection({
             <StaggerItems className="mt-8 space-y-4" delayStep={0.08}>
               {benefits.map((benefit) => (
                 <div key={benefit} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex shrink-0 items-center justify-center rounded-full bg-pine/10 p-1 text-pine">
+                  <span className="mt-0.5 flex shrink-0 items-center justify-center rounded-full bg-teal/10 p-1 text-teal">
                     <Check className="h-4 w-4" />
                   </span>
-                  <span className="text-sm text-timber/80 md:text-base">
+                  <span className="text-sm text-navy/80 md:text-base">
                     {benefit}
                   </span>
                 </div>
@@ -79,7 +79,7 @@ export function ValuePropSection({
                 />
               </div>
             ) : (
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-pine via-timber to-lake shadow-warm" />
+              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-teal via-navy to-lake shadow-warm" />
             )}
           </Reveal>
         </div>

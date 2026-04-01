@@ -10,7 +10,7 @@ interface TeamBioProps {
 export function TeamBio({ member, showImage = true }: TeamBioProps) {
   return (
     <Reveal>
-      <div className="overflow-hidden rounded-2xl border border-timber/10 bg-cream shadow-card">
+      <div className="overflow-hidden rounded-2xl border border-navy/10 bg-sand shadow-card">
         {showImage && (
           <div className="relative aspect-[4/3]">
             {member.image ? (
@@ -21,22 +21,22 @@ export function TeamBio({ member, showImage = true }: TeamBioProps) {
                 className="object-cover object-[center_15%]"
               />
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-timber via-pine to-lake" />
+              <div className="h-full w-full bg-gradient-to-br from-navy via-teal to-lake" />
             )}
           </div>
         )}
 
         {/* Content */}
         <div className="p-6">
-          <h3 className="font-display text-2xl text-timber">
+          <h3 className="font-display text-2xl text-navy">
             {member.name}
           </h3>
 
-          <p className="mt-1 text-sm uppercase tracking-wider text-amber">
+          <p className="mt-1 text-sm uppercase tracking-wider text-gold">
             {member.role}
           </p>
 
-          <p className="mt-4 text-base text-timber/80">
+          <p className="mt-4 text-base text-navy/80">
             {member.bio}
           </p>
         </div>

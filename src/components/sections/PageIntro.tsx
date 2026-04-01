@@ -10,18 +10,18 @@ interface PageIntroProps {
 
 export function PageIntro({ kicker, title, intro, children }: PageIntroProps) {
   return (
-    <section className="section-shell bg-gradient-to-br from-birch via-cream to-birch">
+    <section className="section-shell bg-gradient-to-br from-sand-light via-sand to-sand-light">
       <div className="grid-shell">
         <Reveal immediate>
-          <p className="text-xs uppercase tracking-[0.2em] text-amber">
+          <p className="text-xs uppercase tracking-[0.2em] text-gold">
             {kicker}
           </p>
 
-          <h1 className="font-display mt-4 text-5xl font-semibold text-timber md:text-6xl">
+          <h1 className="font-display mt-4 text-5xl font-semibold text-navy md:text-6xl">
             {title}
           </h1>
 
-          <p className="text-balance mt-6 max-w-2xl text-base text-timber/80 md:text-lg">
+          <p className="text-balance mt-6 max-w-2xl text-base text-navy/80 md:text-lg">
             {intro}
           </p>
 

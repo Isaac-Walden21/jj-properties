@@ -77,13 +77,13 @@ export default function SellPage() {
       />
 
       {/* How It Works */}
-      <section className="section-shell bg-birch">
+      <section className="section-shell bg-sand-light">
         <div className="grid-shell">
           <Reveal>
-            <h2 className="font-display text-center text-3xl font-semibold text-timber md:text-4xl">
+            <h2 className="font-display text-center text-3xl font-semibold text-navy md:text-4xl">
               How It Works
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-center text-base text-timber/80 md:text-lg">
+            <p className="mx-auto mt-4 max-w-2xl text-center text-base text-navy/80 md:text-lg">
               Selling your property can be a quick and simple process. Here&apos;s how we make it happen.
             </p>
           </Reveal>
@@ -91,13 +91,13 @@ export default function SellPage() {
           <StaggerItems className="mx-auto mt-12 grid max-w-4xl gap-8 md:grid-cols-3" delayStep={0.1}>
             {steps.map((step) => (
               <div key={step.number} className="text-center">
-                <span className="font-display text-5xl font-bold text-pine/20">
+                <span className="font-display text-5xl font-bold text-teal/20">
                   {step.number}
                 </span>
-                <h3 className="font-display mt-2 text-xl font-semibold text-timber">
+                <h3 className="font-display mt-2 text-xl font-semibold text-navy">
                   {step.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-timber/70">
+                <p className="mt-3 text-sm leading-relaxed text-navy/70">
                   {step.description}
                 </p>
               </div>
@@ -110,10 +110,10 @@ export default function SellPage() {
       <section className="section-shell">
         <div className="grid-shell">
           <Reveal>
-            <h2 className="font-display text-center text-3xl font-semibold text-timber md:text-4xl">
+            <h2 className="font-display text-center text-3xl font-semibold text-navy md:text-4xl">
               Frequently Asked Questions
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-center text-base text-timber/80 md:text-lg">
+            <p className="mx-auto mt-4 max-w-2xl text-center text-base text-navy/80 md:text-lg">
               Have questions? Here are answers to the ones we hear most. If you still have a question, don&apos;t hesitate to reach out.
             </p>
           </Reveal>
@@ -122,10 +122,10 @@ export default function SellPage() {
             {faqs.map((faq) => (
               <Reveal key={faq.question}>
                 <div>
-                  <h3 className="font-display text-lg font-semibold text-timber">
+                  <h3 className="font-display text-lg font-semibold text-navy">
                     {faq.question}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-timber/70 md:text-base">
+                  <p className="mt-2 text-sm leading-relaxed text-navy/70 md:text-base">
                     {faq.answer}
                   </p>
                 </div>
@@ -140,7 +140,7 @@ export default function SellPage() {
         description="Start with a confidential conversation about your property. No pressure, no obligations — just a straightforward discussion about what your property is worth."
         ctaLabel="Get Your Offer"
         ctaHref="/contact?type=sell"
-        variant="timber"
+        variant="navy"
       />
     </>
   );

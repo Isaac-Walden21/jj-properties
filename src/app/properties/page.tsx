@@ -29,21 +29,21 @@ export default function PropertiesPage() {
               {/* Sell CTA card */}
               <Link
                 href="/sell"
-                className="sleek-lift group block overflow-hidden rounded-2xl border border-dashed border-amber/30 bg-cream shadow-card"
+                className="sleek-lift group block overflow-hidden rounded-2xl border border-dashed border-gold/30 bg-sand shadow-card"
               >
-                <div className="aspect-[4/3] bg-gradient-to-br from-amber/20 via-timber/15 to-pine/20 relative flex items-center justify-center overflow-hidden">
-                  <span className="font-display text-6xl text-timber/20 transition-transform duration-300 group-hover:scale-110">
+                <div className="aspect-[4/3] bg-gradient-to-br from-gold/20 via-navy/15 to-teal/20 relative flex items-center justify-center overflow-hidden">
+                  <span className="font-display text-6xl text-navy/20 transition-transform duration-300 group-hover:scale-110">
                     ?
                   </span>
                 </div>
                 <div className="p-5 text-center">
-                  <p className="font-display text-2xl text-timber">
+                  <p className="font-display text-2xl text-navy">
                     Our Next Property
                   </p>
                   <p className="mt-1 text-sm text-stone">
                     Could it be yours?
                   </p>
-                  <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-amber transition-colors group-hover:text-amber-dark">
+                  <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-gold transition-colors group-hover:text-gold-dark">
                     Learn More
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
