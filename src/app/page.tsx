@@ -42,6 +42,10 @@ export default function HomePage() {
         ctaLabel={site.pages.sell.cta.label}
         ctaHref="/sell"
         reversed
+        image={{
+          src: "/images/cedarville-bay.jpg",
+          alt: "Cedarville Bay waterfront in Michigan's Upper Peninsula",
+        }}
       />
 
       {/* Partner with Us */}
@@ -56,6 +60,10 @@ export default function HomePage() {
         ]}
         ctaLabel={site.pages.invest.cta.label}
         ctaHref="/invest"
+        image={{
+          src: "/images/year-round-adventure.jpg",
+          alt: "Year-round adventure in Michigan's Upper Peninsula",
+        }}
       />
 
       <CTABanner

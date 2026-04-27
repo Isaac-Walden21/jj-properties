@@ -74,6 +74,10 @@ export default function SellPage() {
         ]}
         ctaLabel={site.pages.sell.cta.label}
         ctaHref="/contact?type=sell"
+        image={{
+          src: "/images/relax-and-recharge.jpg",
+          alt: "Quiet hospitality setting in Michigan's Upper Peninsula",
+        }}
       />
 
       {/* How It Works */}

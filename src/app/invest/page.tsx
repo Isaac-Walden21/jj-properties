@@ -28,6 +28,10 @@ export default function InvestPage() {
         ]}
         ctaLabel={site.pages.invest.cta.label}
         ctaHref="/contact?type=invest"
+        image={{
+          src: "/images/les-cheneaux-islands.jpeg",
+          alt: "Les Cheneaux Islands in Michigan's Upper Peninsula",
+        }}
       />
 
       <CTABanner
