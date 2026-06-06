@@ -783,18 +783,20 @@ export async function sendEmailViaSes(args: {
   to: string;
   from: string;
   subject: string;
-  html: string;
   text: string;
+  html?: string;          // optional — the staff notification is text-only today
+  replyTo?: string;       // e.g. the inquirer's email on the staff notification
 }): Promise<void> {
   await getClient().send(
     new SendEmailCommand({
       Source: args.from,
       Destination: { ToAddresses: [args.to] },
+      ReplyToAddresses: args.replyTo ? [args.replyTo] : undefined,
       Message: {
         Subject: { Data: args.subject, Charset: "UTF-8" },
         Body: {
-          Html: { Data: args.html, Charset: "UTF-8" },
           Text: { Data: args.text, Charset: "UTF-8" },
+          ...(args.html ? { Html: { Data: args.html, Charset: "UTF-8" } } : {}),
         },
       },
     })
@@ -804,29 +806,28 @@ export async function sendEmailViaSes(args: {
 
 - [ ] **Step 3: Provider switch in `email.ts`**
 
-Refactor `sendContactEmail` so the message content is built once, then dispatched by `EMAIL_PROVIDER`. Preserve the existing Resend code path verbatim for `EMAIL_PROVIDER !== "ses"`. Sketch:
+**Confirmed against the real `src/lib/email.ts`:** `sendContactEmail(payload: ContactInput, requestId: string)` builds a **text-only** body (`const text = lines.join("\n")`) — there is no HTML — and the Resend call uses `from = LEAD_FROM_EMAIL`, `to = LEAD_TO_EMAIL`, `replyTo = payload.email`. Refactor so `subject` + `text` are built once, then dispatched by `EMAIL_PROVIDER`, keeping the existing Resend branch verbatim. Sketch:
 ```ts
-// inside sendContactEmail(data, requestId), after building { subject, html, text }:
+// inside sendContactEmail(payload, requestId), after building `subject` and `text`:
+const to = process.env.LEAD_TO_EMAIL;
+if (!to) throw new Error("LEAD_TO_EMAIL is not set");
+
 if (process.env.EMAIL_PROVIDER === "ses") {
+  const from = process.env.SES_FROM_EMAIL;
+  if (!from) throw new Error("SES_FROM_EMAIL is not set");
   const { sendEmailViaSes } = await import("./email-ses");
-  await sendEmailViaSes({
-    to: process.env.LEAD_TO_EMAIL!,
-    from: process.env.SES_FROM_EMAIL!,
-    subject,
-    html,
-    text,
-  });
+  await sendEmailViaSes({ to, from, subject, text, replyTo: payload.email });
   return;
 }
-// ...existing Resend send stays here unchanged...
+// ...existing Resend path unchanged (still requires LEAD_FROM_EMAIL)...
 ```
-Keep the function signature and all existing exports identical so `/api/contact` and the Vercel copy are unaffected when `EMAIL_PROVIDER=resend`.
+Move the `LEAD_FROM_EMAIL` requirement *inside* the Resend branch so the SES path doesn't demand it. Keep the function signature and all existing exports identical so `/api/contact` and the Vercel copy are unaffected when `EMAIL_PROVIDER=resend`.
 
 - [ ] **Step 4: Auto-acknowledgement + password-reset email builders**
 
 Add to `src/lib/email.ts` two new exports that build content and dispatch through the same provider switch used by `sendContactEmail` (factor the dispatch into a small `sendEmail({to,subject,html,text})` helper if convenient). Both are best-effort at the call site.
 ```ts
-import type { ContactInput } from "@/types"; // adjust to the existing validated-data type
+import type { ContactInput } from "@/lib/validation/contact"; // confirmed export location
 
 export async function sendInquiryAck(data: ContactInput): Promise<void> {
   const subject = "We received your message · JJ Properties";
@@ -2040,9 +2041,11 @@ git commit -m "docs(crm): deploy notes (Lightsail/SES/SQLite) and admin portal R
 - **Account ownership / handoff** → Task 15 (`deploy/README.md`, backups) + spec ownership section.
 - **Backlog (post-v1), not implemented** (reply-from-portal, reporting dashboard, audit log + soft delete) and **out-of-scope** (assignment + follow-up dates, multi-tenant, Slack/SMS, 2FA) → matches spec.
 
-**Open items to confirm during implementation:**
-- Exact field names from `contactSchema` (Task 6 maps `firstName`/`inquiryType`/`propertyInterest` — verify against `@/lib/validation/contact`), and where to add the optional `sourcePage`/`sourceProperty` fields.
-- The current `sendContactEmail` signature/content (Task 5 reuses its message builder and the same provider-switch logic for ack/reset).
+**Confirmed against source (2026-06-06):**
+- ✅ `contactSchema` fields — `firstName`/`lastName`/`email`/`phone`/`inquiryType`/`propertyInterest`/`message`/`honeypot`, all camelCase; `inquiryType` enum matches the DB CHECK. Task 6's mapping is correct as written. `sourcePage`/`sourceProperty` are new optional fields to add.
+- ✅ `sendContactEmail(payload: ContactInput, requestId)` signature; `ContactInput` exported from `@/lib/validation/contact`. Note it is **text-only** (no HTML) and uses `LEAD_FROM_EMAIL` + `replyTo: payload.email` — Task 5 updated accordingly (optional html, reply-to, provider-aware From).
+
+**Still open:**
 - Property-interest slug values, to enable the Property filter UI (Task 10) and to populate `source_property` from property pages (Task 6).
 
 No placeholders, no contradictions, no undefined types or methods between tasks.
