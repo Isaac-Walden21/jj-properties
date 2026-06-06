@@ -156,9 +156,11 @@ git commit -m "feat(crm): swap Supabase deps for SQLite/bcrypt/iron-session/SES 
 
 ## Task 2: SQLite schema, migration runner, and connection module
 
+**Status: ✅ complete — commit `2574db2` (2026-06-06).** Run `npm run migrate` under nvm node v22.
+
 **Files:** Create `db/migrations/0001_init.sql`, `scripts/migrate.mjs`, `src/lib/db/index.ts`.
 
-- [ ] **Step 1: Write the migration SQL**
+- [x] **Step 1: Write the migration SQL**
 
 Create `db/migrations/0001_init.sql`:
 ```sql
@@ -218,7 +220,7 @@ CREATE INDEX IF NOT EXISTS idx_notes_inquiry  ON inquiry_notes(inquiry_id, creat
 CREATE INDEX IF NOT EXISTS idx_resets_user    ON password_resets(user_id);
 ```
 
-- [ ] **Step 2: Write the migration runner**
+- [x] **Step 2: Write the migration runner**
 
 Create `scripts/migrate.mjs`:
 ```js
@@ -258,7 +260,7 @@ for (const file of files) {
 console.log(`Done. DB at ${dbPath}`);
 ```
 
-- [ ] **Step 3: Connection module**
+- [x] **Step 3: Connection module**
 
 Create `src/lib/db/index.ts`:
 ```ts
@@ -278,7 +280,7 @@ export function getDb(): Database.Database {
 }
 ```
 
-- [ ] **Step 4: Run the migration locally**
+- [x] **Step 4: Run the migration locally**
 
 ```bash
 npm run migrate
@@ -286,7 +288,7 @@ sqlite3 ./data/crm.db ".tables"
 ```
 Expected: lists `_migrations`, `inquiries`, `inquiry_notes`, `users`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add db/migrations scripts/migrate.mjs src/lib/db/index.ts
