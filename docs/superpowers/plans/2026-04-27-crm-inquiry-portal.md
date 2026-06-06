@@ -867,11 +867,13 @@ git commit -m "feat(crm): SES transport, EMAIL_PROVIDER switch, ack + reset emai
 
 ## Task 6: Persist inquiries from `/api/contact`
 
+**Status: ✅ complete — commit `5ad7880` (2026-06-06).** Smoke-tested live under node v22.
+
 **Files:** Modify `src/app/api/contact/route.ts`.
 
-- [ ] **Step 1: Read the existing route** so the insert lands after validation/honeypot and before the email send.
+- [x] **Step 1: Read the existing route** so the insert lands after validation/honeypot and before the email send.
 
-- [ ] **Step 2: Insert into SQLite (with lead source) and send both emails**
+- [x] **Step 2: Insert into SQLite (with lead source) and send both emails**
 
 Add the imports and the best-effort insert + acknowledgement (neither DB nor ack failures may block the staff notification or the success response). Lead source comes from optional hidden form fields, falling back to the `Referer` header:
 ```ts
@@ -916,7 +918,7 @@ try {
 ```
 Keep all existing rate-limit / Zod / honeypot / error-handling logic intact. Map field names to the existing `contactSchema` output (adjust `data.firstName` etc. if the schema uses different keys). Add optional `sourcePage` / `sourceProperty` string fields to `contactSchema` (both optional, defaulted) and submit them as hidden inputs from the public `ContactForm` (current `pathname` and, on a property page, the property slug).
 
-- [ ] **Step 3: Manual smoke (local)**
+- [x] **Step 3: Manual smoke (local)**
 
 ```bash
 PORT=3004 npm run dev
@@ -927,7 +929,7 @@ sqlite3 ./data/crm.db "SELECT created_at, first_name, email, status, is_read FRO
 ```
 Expected: new row with `status='new'`, `is_read=0`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/app/api/contact/route.ts
