@@ -768,13 +768,15 @@ git commit -m "feat(crm): bcrypt helper (TDD), iron-session w/ roles, token + us
 
 ## Task 5: Amazon SES email transport + provider switch
 
+**Status: ✅ complete — commit `eca23f2` (2026-06-06).**
+
 **Files:** Create `src/lib/email-ses.ts`; modify `src/lib/email.ts`.
 
-- [ ] **Step 1: Read the existing email module**
+- [x] **Step 1: Read the existing email module**
 
 Read `src/lib/email.ts` end-to-end. Identify how `sendContactEmail(data, requestId)` builds the subject/recipient/HTML/text so the same content can be reused for SES.
 
-- [ ] **Step 2: SES transport**
+- [x] **Step 2: SES transport**
 
 Create `src/lib/email-ses.ts`:
 ```ts
@@ -812,7 +814,7 @@ export async function sendEmailViaSes(args: {
 }
 ```
 
-- [ ] **Step 3: Provider switch in `email.ts`**
+- [x] **Step 3: Provider switch in `email.ts`**
 
 **Confirmed against the real `src/lib/email.ts`:** `sendContactEmail(payload: ContactInput, requestId: string)` builds a **text-only** body (`const text = lines.join("\n")`) — there is no HTML — and the Resend call uses `from = LEAD_FROM_EMAIL`, `to = LEAD_TO_EMAIL`, `replyTo = payload.email`. Refactor so `subject` + `text` are built once, then dispatched by `EMAIL_PROVIDER`, keeping the existing Resend branch verbatim. Sketch:
 ```ts
@@ -831,7 +833,7 @@ if (process.env.EMAIL_PROVIDER === "ses") {
 ```
 Move the `LEAD_FROM_EMAIL` requirement *inside* the Resend branch so the SES path doesn't demand it. Keep the function signature and all existing exports identical so `/api/contact` and the Vercel copy are unaffected when `EMAIL_PROVIDER=resend`.
 
-- [ ] **Step 4: Auto-acknowledgement + password-reset email builders**
+- [x] **Step 4: Auto-acknowledgement + password-reset email builders**
 
 Add to `src/lib/email.ts` two new exports that build content and dispatch through the same provider switch used by `sendContactEmail` (factor the dispatch into a small `sendEmail({to,subject,html,text})` helper if convenient). Both are best-effort at the call site.
 ```ts
@@ -853,7 +855,7 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
 ```
 (`sendEmail` should send via SES when `EMAIL_PROVIDER=ses`, else Resend — same branch logic as `sendContactEmail`. The acknowledgement goes to the inquirer; the reset email goes to the staff account.)
 
-- [ ] **Step 5: Type-check and commit**
+- [x] **Step 5: Type-check and commit**
 
 ```bash
 npx tsc --noEmit
