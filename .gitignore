@@ -13,6 +13,12 @@
 # testing
 /coverage
 
+# local SQLite database (CRM)
+/data/
+*.db
+*.db-shm
+*.db-wal
+
 # next.js
 /.next/
 /out/
