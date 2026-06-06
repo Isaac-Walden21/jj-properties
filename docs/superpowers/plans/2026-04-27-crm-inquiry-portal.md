@@ -1210,9 +1210,17 @@ Create `src/components/admin/InquiryFilters.tsx`:
 ```tsx
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
+import { properties } from "@/content/properties";
 
 const STATUSES = ["all", "new", "contacted", "closed"] as const;
 const TYPES = ["all", "buy", "sell", "invest", "general"] as const;
+
+// Derived from the same source the public form uses (value = slug, label = name),
+// so the filter never drifts from the property list. "all" added at the front.
+const PROPERTY_OPTIONS = [
+  { value: "all", label: "All properties" },
+  ...properties.map((p) => ({ value: p.slug, label: p.name })),
+];
 
 export default function InquiryFilters() {
   const router = useRouter();
@@ -1227,12 +1235,14 @@ export default function InquiryFilters() {
 
   const status = params.get("status") ?? "new";
   const type = params.get("type") ?? "all";
+  const property = params.get("property") ?? "all";
   const q = params.get("q") ?? "";
 
   return (
     <div className="flex flex-wrap items-end gap-3 mb-4">
-      <Select label="Status" value={status} options={[...STATUSES]} onChange={(v) => update("status", v)} />
-      <Select label="Type" value={type} options={[...TYPES]} onChange={(v) => update("type", v)} />
+      <Select label="Status" value={status} options={STATUSES.map((s) => ({ value: s, label: s }))} onChange={(v) => update("status", v)} />
+      <Select label="Type" value={type} options={TYPES.map((t) => ({ value: t, label: t }))} onChange={(v) => update("type", v)} />
+      <Select label="Property" value={property} options={PROPERTY_OPTIONS} onChange={(v) => update("property", v)} />
       <label className="flex flex-col text-xs text-stone-600">
         Search
         <input
@@ -1254,7 +1264,7 @@ function Select({
 }: {
   label: string;
   value: string;
-  options: string[];
+  options: { value: string; label: string }[];
   onChange: (v: string) => void;
 }) {
   return (
@@ -1266,14 +1276,14 @@ function Select({
         className="mt-1 rounded-md border border-stone-300 px-2 py-1 text-sm capitalize"
       >
         {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
+          <option key={o.value} value={o.value}>{o.label}</option>
         ))}
       </select>
     </label>
   );
 }
 ```
-(Property filter omitted from v1 UI — `property_interest` values depend on how the public form populates it; add a Property `<Select>` here once those slugs are confirmed. `listInquiries` already supports a `property` filter.)
+The Property filter matches on `property_interest` (slug). `listInquiries` already supports the `property` filter; the list page passes `property: sp.property`. Confirmed slugs: `papins-resort`, `island-view-resort`, `waterway-inn`, `tahquamenon-suites`, `cedarville-hotel`.
 
 - [ ] **Step 2: List page (server-side query)**
 
@@ -2045,7 +2055,8 @@ git commit -m "docs(crm): deploy notes (Lightsail/SES/SQLite) and admin portal R
 - ✅ `contactSchema` fields — `firstName`/`lastName`/`email`/`phone`/`inquiryType`/`propertyInterest`/`message`/`honeypot`, all camelCase; `inquiryType` enum matches the DB CHECK. Task 6's mapping is correct as written. `sourcePage`/`sourceProperty` are new optional fields to add.
 - ✅ `sendContactEmail(payload: ContactInput, requestId)` signature; `ContactInput` exported from `@/lib/validation/contact`. Note it is **text-only** (no HTML) and uses `LEAD_FROM_EMAIL` + `replyTo: payload.email` — Task 5 updated accordingly (optional html, reply-to, provider-aware From).
 
-**Still open:**
-- Property-interest slug values, to enable the Property filter UI (Task 10) and to populate `source_property` from property pages (Task 6).
+- ✅ Property slugs (`src/content/properties.ts`): `papins-resort`, `island-view-resort`, `waterway-inn`, `tahquamenon-suites`, `cedarville-hotel`. The public form stores the **slug** in `propertyInterest` (`{ value: p.slug }`), so the Property filter (Task 10) derives options from `@/content/properties`, and `source_property` can come from `propertyInterest` (Task 6).
+
+**Still open:** none — all source assumptions verified against the codebase.
 
 No placeholders, no contradictions, no undefined types or methods between tasks.
