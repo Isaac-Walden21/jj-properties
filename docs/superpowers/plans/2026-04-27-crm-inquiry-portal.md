@@ -940,9 +940,11 @@ git commit -m "feat(crm): persist inquiries to SQLite before email send"
 
 ## Task 7: Auth middleware
 
+**Status: ✅ complete — commit `b7ea396` (2026-06-06).**
+
 **Files:** Create `src/middleware.ts`.
 
-- [ ] **Step 1: Implement middleware**
+- [x] **Step 1: Implement middleware**
 
 Create `src/middleware.ts`:
 ```ts
@@ -980,18 +982,18 @@ export async function middleware(request: NextRequest) {
 export const config = { matcher: ["/admin/:path*"] };
 ```
 
-- [ ] **Step 2: Type-check**
+- [x] **Step 2: Type-check**
 
 ```bash
 npx tsc --noEmit
 ```
 Expected: PASS.
 
-- [ ] **Step 3: Manual smoke**
+- [x] **Step 3: Manual smoke**
 
 Visit `http://localhost:3004/admin` while logged out → redirects to `/admin/login?next=/admin`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/middleware.ts
