@@ -64,11 +64,19 @@ export function ContactForm() {
   async function onSubmit(data: ContactInput) {
     setServerError(null);
 
+    // Lead-source attribution: where the form was submitted from (incl. any
+    // ?type/?property CTA context) and the property slug in context.
+    const payload: ContactInput = {
+      ...data,
+      sourcePage: window.location.pathname + window.location.search,
+      sourceProperty: defaultProperty ?? data.propertyInterest ?? "",
+    };
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       const result: ContactResponse = await response.json();

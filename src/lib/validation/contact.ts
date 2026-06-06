@@ -41,6 +41,10 @@ export const contactSchema = z.object({
   sellAskingPrice: z.string().trim().max(200).optional().or(z.literal("")),
   sellCondition: z.string().trim().max(1000).optional().or(z.literal("")),
   sellWalkaway: z.string().trim().max(200).optional().or(z.literal("")),
+  // Lead-source attribution (set by the client; not user-facing). Optional so
+  // submissions without them still validate.
+  sourcePage: z.string().max(512).optional().or(z.literal("")),
+  sourceProperty: z.string().max(128).optional().or(z.literal("")),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;

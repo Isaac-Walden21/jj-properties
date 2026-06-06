@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { contactSchema } from "@/lib/validation/contact";
 import { formatContactFieldErrors } from "@/lib/validation/errors";
 import { checkContactRateLimit } from "@/lib/rate-limit";
-import { sendContactEmail } from "@/lib/email";
+import { sendContactEmail, sendInquiryAck } from "@/lib/email";
+import { createInquiry } from "@/lib/db/inquiries";
 import type { ContactResponse } from "@/types";
 
 function getClientIp(request: Request): string {
@@ -64,9 +65,33 @@ export async function POST(request: Request) {
       });
     }
 
-    // --- Send email ---
     const requestId = crypto.randomUUID();
 
+    // Lead source: client-provided fields first, then Referer path as a fallback.
+    const referer = request.headers.get("referer");
+    const sourcePage =
+      data.sourcePage || (referer ? new URL(referer).pathname : null);
+    const sourceProperty = data.sourceProperty || data.propertyInterest || null;
+
+    // --- Persist to SQLite (best-effort: never blocks email send) ---
+    try {
+      createInquiry({
+        request_id: requestId,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        phone: data.phone || null,
+        inquiry_type: data.inquiryType,
+        property_interest: data.propertyInterest || null,
+        source_page: sourcePage,
+        source_property: sourceProperty,
+        message: data.message,
+      });
+    } catch (dbErr) {
+      console.error("[contact] DB insert failed:", dbErr);
+    }
+
+    // --- Send staff notification email ---
     try {
       await sendContactEmail(data, requestId);
     } catch (emailError) {
@@ -79,6 +104,13 @@ export async function POST(request: Request) {
         },
         { status: 500 }
       );
+    }
+
+    // --- Auto-acknowledge the inquirer (best-effort) ---
+    try {
+      await sendInquiryAck(data);
+    } catch (ackError) {
+      console.error("[contact] Ack email failed:", ackError);
     }
 
     return NextResponse.json<ContactResponse>({
