@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-> **Revised 2026-06-06 — AWS rewrite.** This plan supersedes the original Supabase/Vercel version. The CRM now runs on an AWS Lightsail box with **SQLite** for storage, **custom username/password auth** (bcrypt + `iron-session`), and **Amazon SES** for email. The public marketing site stays live on Vercel until DNS cutover; the CRM is built and hosted on the Lightsail copy. See the spec's Revision History for the rationale.
+> **Revised 2026-06-06 — AWS rewrite + v1 scope.** This plan supersedes the original Supabase/Vercel version. The CRM runs on an AWS Lightsail box with **SQLite** storage, **custom username/password auth** (bcrypt + `iron-session`), and **Amazon SES** email. The public marketing site stays live on Vercel until DNS cutover. The v1 scope also includes four stories added 2026-06-06: **admin/staff roles**, **self password-change + forgot/reset**, **auto-acknowledgement email** to the inquirer, and **lead-source capture**. See the spec's Revision History + User Stories.
 
 **Goal:** Persist every contact-form inquiry to SQLite and ship a password-protected `/admin` portal where JJ Properties staff can triage inquiries (view, status, mark-read, notes, manage staff accounts).
 
@@ -23,38 +23,45 @@
 - `scripts/migrate.mjs` — idempotent migration runner
 - `scripts/create-user.mjs` — bootstrap/admin user creator (bcrypt)
 - `src/lib/db/index.ts` — `better-sqlite3` connection singleton (server-only)
-- `src/lib/db/inquiries.ts` — inquiry queries (create/list/get/update)
+- `src/lib/db/inquiries.ts` — inquiry queries (create w/ lead source, list/get/update)
 - `src/lib/db/notes.ts` — note queries (list/create)
-- `src/lib/db/users.ts` — user queries (getByUsername/list/create/remove)
+- `src/lib/db/users.ts` — user queries (getByUsername/getById/getByEmail/list/create/updatePassword/remove)
+- `src/lib/db/passwordResets.ts` — reset-token queries (create/consume)
 - `src/lib/auth/password.ts` — `hashPassword` / `verifyPassword`
 - `src/lib/auth/password.test.ts` — unit tests
-- `src/lib/auth/session.ts` — `iron-session` config + `getSession` / `requireSession`
+- `src/lib/auth/token.ts` — reset-token generate/hash/expiry helpers
+- `src/lib/auth/session.ts` — `iron-session` config + `getSession` / `requireSession` / `requireAdmin`
 - `src/lib/email-ses.ts` — SES transport
-- `src/middleware.ts` — protect `/admin/**`
-- `src/app/admin/layout.tsx` — AdminShell layout
+- `src/middleware.ts` — protect `/admin/**` (login + reset routes public)
+- `src/app/admin/layout.tsx` — AdminShell layout (passes role)
 - `src/app/admin/page.tsx` — inquiries list
-- `src/app/admin/actions.ts` — server actions (status/read, notes, users)
-- `src/app/admin/login/page.tsx` — login form shell
+- `src/app/admin/actions.ts` — server actions (status/read, notes, users; user mgmt is admin-only)
+- `src/app/admin/login/page.tsx` — login form shell (+ forgot-password link)
 - `src/app/admin/login/LoginForm.tsx` — client form (useActionState)
-- `src/app/admin/login/actions.ts` — `loginAction` / `signOutAction`
-- `src/app/admin/inquiries/[id]/page.tsx` — inquiry detail
+- `src/app/admin/login/actions.ts` — `loginAction` (sets role) / `signOutAction`
+- `src/app/admin/account/page.tsx` + `AccountForm.tsx` + `actions.ts` — change own password
+- `src/app/admin/forgot-password/page.tsx` + `actions.ts` — request reset link
+- `src/app/admin/reset-password/page.tsx` + `actions.ts` — set new password from token
+- `src/app/admin/inquiries/[id]/page.tsx` — inquiry detail (incl. lead source)
 - `src/app/admin/inquiries/[id]/StatusControl.tsx` — client component
 - `src/app/admin/inquiries/[id]/NotesThread.tsx` — client component
-- `src/app/admin/users/page.tsx` — staff accounts
-- `src/app/admin/users/UsersTable.tsx` — client component
-- `src/components/admin/AdminShell.tsx`
+- `src/app/admin/users/page.tsx` — staff accounts (admin-only)
+- `src/app/admin/users/UsersTable.tsx` — client component (role select + display)
+- `src/components/admin/AdminShell.tsx` — role-aware nav (Users = admin only) + account link
 - `src/components/admin/InquiryFilters.tsx`
-- `src/types/crm.ts` — `Inquiry`, `InquiryNote`, `StaffUser` types
-- `deploy/` — Lightsail setup notes, nginx + systemd/pm2 config (Task 14)
+- `src/types/crm.ts` — `Inquiry`, `InquiryNote`, `StaffUser`, `UserRole` types
+- `deploy/` — Lightsail setup notes, nginx + systemd/pm2 config (Task 15)
 
 **Modified:**
 - `next.config.*` — add `serverExternalPackages: ["better-sqlite3"]`
-- `src/app/api/contact/route.ts` — SQLite insert before email send
-- `src/lib/email.ts` — provider switch (Resend | SES)
+- `src/app/api/contact/route.ts` — SQLite insert (w/ lead source) before email; auto-ack after
+- `src/lib/email.ts` — provider switch (Resend | SES) + ack/reset email builders
+- `src/lib/validation/contact` — add optional `sourcePage` / `sourceProperty` fields
+- `src/components/forms/ContactForm.tsx` — submit hidden lead-source fields
 - `.env.example` — SQLite path, session secret, SES vars (remove Supabase vars)
 - `.gitignore` — ignore `data/` (local SQLite) and `*.db`
 - `package.json` — add deps + `migrate` / `test` scripts; remove `@supabase/*`
-- `README.md` — admin portal setup notes (Task 14)
+- `README.md` — admin portal setup notes (Task 15)
 
 ---
 
@@ -161,8 +168,17 @@ CREATE TABLE IF NOT EXISTS users (
   username      TEXT    NOT NULL UNIQUE,
   email         TEXT    NOT NULL UNIQUE,
   password_hash TEXT    NOT NULL,
+  role          TEXT    NOT NULL DEFAULT 'staff' CHECK (role IN ('admin','staff')),
   created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
   added_by      INTEGER REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS password_resets (
+  token_hash  TEXT    PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  expires_at  TEXT    NOT NULL,
+  used_at     TEXT,
+  created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS inquiries (
@@ -174,6 +190,8 @@ CREATE TABLE IF NOT EXISTS inquiries (
   phone             TEXT,
   inquiry_type      TEXT    NOT NULL CHECK (inquiry_type IN ('buy','sell','invest','general')),
   property_interest TEXT,
+  source_page       TEXT,
+  source_property   TEXT,
   message           TEXT    NOT NULL,
   status            TEXT    NOT NULL DEFAULT 'new'
                           CHECK (status IN ('new','contacted','closed')),
@@ -184,6 +202,7 @@ CREATE TABLE IF NOT EXISTS inquiries (
 CREATE INDEX IF NOT EXISTS idx_inquiries_status     ON inquiries(status);
 CREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);
 CREATE INDEX IF NOT EXISTS idx_inquiries_property   ON inquiries(property_interest);
+CREATE INDEX IF NOT EXISTS idx_inquiries_source     ON inquiries(source_property);
 
 CREATE TABLE IF NOT EXISTS inquiry_notes (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -193,7 +212,8 @@ CREATE TABLE IF NOT EXISTS inquiry_notes (
   created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_notes_inquiry ON inquiry_notes(inquiry_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_notes_inquiry  ON inquiry_notes(inquiry_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_resets_user    ON password_resets(user_id);
 ```
 
 - [ ] **Step 2: Write the migration runner**
@@ -284,6 +304,8 @@ Create `src/types/crm.ts`:
 export type InquiryStatus = "new" | "contacted" | "closed";
 export type InquiryType = "buy" | "sell" | "invest" | "general";
 
+export type UserRole = "admin" | "staff";
+
 export interface Inquiry {
   id: number;
   created_at: string;
@@ -293,6 +315,8 @@ export interface Inquiry {
   phone: string | null;
   inquiry_type: InquiryType;
   property_interest: string | null;
+  source_page: string | null;
+  source_property: string | null;
   message: string;
   status: InquiryStatus;
   is_read: boolean;
@@ -312,6 +336,7 @@ export interface StaffUser {
   id: number;
   username: string;
   email: string;
+  role: UserRole;
   created_at: string;
   added_by: number | null;
 }
@@ -348,13 +373,17 @@ export function createInquiry(input: {
   phone: string | null;
   inquiry_type: string;
   property_interest: string | null;
+  source_page: string | null;
+  source_property: string | null;
   message: string;
 }): number {
   const stmt = getDb().prepare(
     `INSERT INTO inquiries
-       (request_id, first_name, last_name, email, phone, inquiry_type, property_interest, message)
+       (request_id, first_name, last_name, email, phone, inquiry_type,
+        property_interest, source_page, source_property, message)
      VALUES
-       (@request_id, @first_name, @last_name, @email, @phone, @inquiry_type, @property_interest, @message)`
+       (@request_id, @first_name, @last_name, @email, @phone, @inquiry_type,
+        @property_interest, @source_page, @source_property, @message)`
   );
   return Number(stmt.run(input).lastInsertRowid);
 }
@@ -472,9 +501,24 @@ export function getUserByUsername(username: string): UserWithHash | null {
   );
 }
 
+export function getUserById(id: number): UserWithHash | null {
+  return (
+    (getDb().prepare("SELECT * FROM users WHERE id = ?").get(id) as UserWithHash | undefined) ??
+    null
+  );
+}
+
+export function getUserByEmail(email: string): UserWithHash | null {
+  return (
+    (getDb()
+      .prepare("SELECT * FROM users WHERE email = ? COLLATE NOCASE")
+      .get(email.trim()) as UserWithHash | undefined) ?? null
+  );
+}
+
 export function listUsers(): StaffUser[] {
   return getDb()
-    .prepare("SELECT id, username, email, created_at, added_by FROM users ORDER BY created_at ASC")
+    .prepare("SELECT id, username, email, role, created_at, added_by FROM users ORDER BY created_at ASC")
     .all() as StaffUser[];
 }
 
@@ -482,15 +526,20 @@ export function createUser(input: {
   username: string;
   email: string;
   password_hash: string;
+  role: "admin" | "staff";
   added_by: number | null;
 }): number {
   return Number(
     getDb()
       .prepare(
-        "INSERT INTO users (username, email, password_hash, added_by) VALUES (@username, @email, @password_hash, @added_by)"
+        "INSERT INTO users (username, email, password_hash, role, added_by) VALUES (@username, @email, @password_hash, @role, @added_by)"
       )
       .run(input).lastInsertRowid
   );
+}
+
+export function updateUserPassword(id: number, password_hash: string): void {
+  getDb().prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(password_hash, id);
 }
 
 export function removeUser(id: number): void {
@@ -502,12 +551,40 @@ export function countUsers(): number {
 }
 ```
 
-- [ ] **Step 5: Type-check and commit**
+- [ ] **Step 5: Password-reset queries**
+
+Create `src/lib/db/passwordResets.ts`:
+```ts
+import "server-only";
+import { getDb } from "./index";
+
+export function createReset(tokenHash: string, userId: number, expiresAt: string): void {
+  getDb()
+    .prepare("INSERT INTO password_resets (token_hash, user_id, expires_at) VALUES (?, ?, ?)")
+    .run(tokenHash, userId, expiresAt);
+}
+
+/** Returns the user_id for a valid, unused, unexpired token and marks it used (single-use). */
+export function consumeReset(tokenHash: string): number | null {
+  const db = getDb();
+  const row = db
+    .prepare(
+      "SELECT user_id, used_at, expires_at FROM password_resets WHERE token_hash = ?"
+    )
+    .get(tokenHash) as { user_id: number; used_at: string | null; expires_at: string } | undefined;
+  if (!row || row.used_at) return null;
+  if (new Date(row.expires_at + "Z").getTime() < Date.now()) return null;
+  db.prepare("UPDATE password_resets SET used_at = datetime('now') WHERE token_hash = ?").run(tokenHash);
+  return row.user_id;
+}
+```
+
+- [ ] **Step 6: Type-check and commit**
 
 ```bash
 npx tsc --noEmit
 git add src/types/crm.ts src/lib/db
-git commit -m "feat(crm): domain types and SQLite data-access layer"
+git commit -m "feat(crm): domain types and SQLite data-access layer (roles, lead source, resets)"
 ```
 
 ---
@@ -581,9 +658,12 @@ import { getIronSession, type SessionOptions } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import type { UserRole } from "@/types/crm";
+
 export interface SessionData {
   userId?: number;
   username?: string;
+  role?: UserRole;
 }
 
 export const sessionOptions: SessionOptions = {
@@ -608,18 +688,51 @@ export async function requireSession() {
   if (!session.userId) redirect("/admin/login");
   return session;
 }
+
+/** Use in admin-only actions/pages (e.g. user management). */
+export async function requireAdmin() {
+  const session = await requireSession();
+  if (session.role !== "admin") redirect("/admin");
+  return session;
+}
 ```
 
-- [ ] **Step 6: User-creation script (bootstrap + handoff)**
+- [ ] **Step 6: Reset-token helper**
 
-Create `scripts/create-user.mjs`:
+Create `src/lib/auth/token.ts`:
+```ts
+import { randomBytes, createHash } from "node:crypto";
+
+/** Random URL-safe token returned to the user (emailed). */
+export function generateResetToken(): string {
+  return randomBytes(32).toString("base64url");
+}
+
+/** SHA-256 hash stored in the DB; raw token is never persisted. */
+export function hashToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+/** ISO-8601 UTC timestamp `minutes` in the future, matching SQLite `datetime('now')` format. */
+export function expiryFromNow(minutes: number): string {
+  return new Date(Date.now() + minutes * 60_000).toISOString().replace("T", " ").slice(0, 19);
+}
+```
+
+- [ ] **Step 7: User-creation script (bootstrap + handoff)**
+
+Create `scripts/create-user.mjs` (4th arg = role, defaults to `admin` so the bootstrap user can manage accounts):
 ```js
 import Database from "better-sqlite3";
 import bcrypt from "bcryptjs";
 
-const [, , username, email, password] = process.argv;
+const [, , username, email, password, role = "admin"] = process.argv;
 if (!username || !email || !password) {
-  console.error("Usage: node scripts/create-user.mjs <username> <email> <password>");
+  console.error("Usage: node scripts/create-user.mjs <username> <email> <password> [admin|staff]");
+  process.exit(1);
+}
+if (!["admin", "staff"].includes(role)) {
+  console.error(`Invalid role '${role}' — must be admin or staff`);
   process.exit(1);
 }
 
@@ -629,18 +742,18 @@ db.pragma("foreign_keys = ON");
 
 const hash = bcrypt.hashSync(password, Number(process.env.BCRYPT_COST ?? 12));
 db.prepare(
-  "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)"
-).run(username, email, hash);
+  "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)"
+).run(username, email, hash, role);
 
-console.log(`Created user '${username}' (${email}) in ${dbPath}`);
+console.log(`Created ${role} '${username}' (${email}) in ${dbPath}`);
 ```
 
-- [ ] **Step 7: Seed a local test user and commit**
+- [ ] **Step 8: Seed a local admin and commit**
 
 ```bash
-SQLITE_DB_PATH=./data/crm.db node scripts/create-user.mjs admin isaac@twenty1-media.com "ChangeMe-2026!"
+SQLITE_DB_PATH=./data/crm.db node scripts/create-user.mjs admin isaac@twenty1-media.com "ChangeMe-2026!" admin
 git add src/lib/auth scripts/create-user.mjs package.json
-git commit -m "feat(crm): bcrypt password helper (TDD), iron-session, user-create script"
+git commit -m "feat(crm): bcrypt helper (TDD), iron-session w/ roles, token + user-create scripts"
 ```
 
 ---
@@ -709,12 +822,34 @@ if (process.env.EMAIL_PROVIDER === "ses") {
 ```
 Keep the function signature and all existing exports identical so `/api/contact` and the Vercel copy are unaffected when `EMAIL_PROVIDER=resend`.
 
-- [ ] **Step 4: Type-check and commit**
+- [ ] **Step 4: Auto-acknowledgement + password-reset email builders**
+
+Add to `src/lib/email.ts` two new exports that build content and dispatch through the same provider switch used by `sendContactEmail` (factor the dispatch into a small `sendEmail({to,subject,html,text})` helper if convenient). Both are best-effort at the call site.
+```ts
+import type { ContactInput } from "@/types"; // adjust to the existing validated-data type
+
+export async function sendInquiryAck(data: ContactInput): Promise<void> {
+  const subject = "We received your message · JJ Properties";
+  const text = `Hi ${data.firstName},\n\nThanks for reaching out to JJ Properties — we've received your message and will be in touch shortly.\n\n— JJ Properties`;
+  const html = `<p>Hi ${data.firstName},</p><p>Thanks for reaching out to JJ Properties — we've received your message and will be in touch shortly.</p><p>— JJ Properties</p>`;
+  await sendEmail({ to: data.email, subject, html, text }); // dispatches by EMAIL_PROVIDER
+}
+
+export async function sendPasswordResetEmail(to: string, resetUrl: string): Promise<void> {
+  const subject = "Reset your JJ Properties admin password";
+  const text = `Use this link to reset your password (valid 30 minutes):\n${resetUrl}\n\nIf you didn't request this, ignore this email.`;
+  const html = `<p>Use this link to reset your password (valid 30 minutes):</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you didn't request this, ignore this email.</p>`;
+  await sendEmail({ to, subject, html, text });
+}
+```
+(`sendEmail` should send via SES when `EMAIL_PROVIDER=ses`, else Resend — same branch logic as `sendContactEmail`. The acknowledgement goes to the inquirer; the reset email goes to the staff account.)
+
+- [ ] **Step 5: Type-check and commit**
 
 ```bash
 npx tsc --noEmit
 git add src/lib/email.ts src/lib/email-ses.ts
-git commit -m "feat(crm): add SES transport and EMAIL_PROVIDER switch (Resend default)"
+git commit -m "feat(crm): SES transport, EMAIL_PROVIDER switch, ack + reset email builders"
 ```
 
 ---
@@ -725,13 +860,20 @@ git commit -m "feat(crm): add SES transport and EMAIL_PROVIDER switch (Resend de
 
 - [ ] **Step 1: Read the existing route** so the insert lands after validation/honeypot and before the email send.
 
-- [ ] **Step 2: Insert into SQLite before email send**
+- [ ] **Step 2: Insert into SQLite (with lead source) and send both emails**
 
-Add the import and the best-effort insert (the DB write must never block the email). The relevant change:
+Add the imports and the best-effort insert + acknowledgement (neither DB nor ack failures may block the staff notification or the success response). Lead source comes from optional hidden form fields, falling back to the `Referer` header:
 ```ts
 import { createInquiry } from "@/lib/db/inquiries";
+import { sendContactEmail, sendInquiryAck } from "@/lib/email";
 // ...
 const requestId = crypto.randomUUID();
+
+// Lead source: hidden form fields first, then Referer path as a fallback.
+const referer = request.headers.get("referer");
+const sourcePage =
+  data.sourcePage ?? (referer ? new URL(referer).pathname : null);
+const sourceProperty = data.sourceProperty ?? data.propertyInterest ?? null;
 
 // --- Persist to SQLite (best-effort: never blocks email send) ---
 try {
@@ -743,16 +885,25 @@ try {
     phone: data.phone || null,
     inquiry_type: data.inquiryType,
     property_interest: data.propertyInterest || null,
+    source_page: sourcePage,
+    source_property: sourceProperty,
     message: data.message,
   });
 } catch (dbErr) {
   console.error("[contact] DB insert failed:", dbErr);
 }
 
-// --- Send email (existing behavior, now provider-aware) ---
+// --- Staff notification (existing behavior, now provider-aware) ---
 await sendContactEmail(data, requestId);
+
+// --- Auto-acknowledge the inquirer (best-effort) ---
+try {
+  await sendInquiryAck(data);
+} catch (ackErr) {
+  console.error("[contact] Ack email failed:", ackErr);
+}
 ```
-Keep all existing rate-limit / Zod / honeypot / error-handling logic intact. Map field names to match the existing `contactSchema` output (adjust `data.firstName` etc. if the schema uses different keys).
+Keep all existing rate-limit / Zod / honeypot / error-handling logic intact. Map field names to the existing `contactSchema` output (adjust `data.firstName` etc. if the schema uses different keys). Add optional `sourcePage` / `sourceProperty` string fields to `contactSchema` (both optional, defaulted) and submit them as hidden inputs from the public `ContactForm` (current `pathname` and, on a property page, the property slug).
 
 - [ ] **Step 3: Manual smoke (local)**
 
@@ -793,9 +944,11 @@ export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
   const session = await getIronSession<SessionData>(request, res, sessionOptions);
 
-  // Login page is the only public admin route.
-  if (pathname === "/admin/login") {
-    if (session.userId) {
+  // Public admin routes: login and the password-reset flow.
+  const PUBLIC = new Set(["/admin/login", "/admin/forgot-password", "/admin/reset-password"]);
+  if (PUBLIC.has(pathname)) {
+    // Already signed in? Skip login (but still allow reset pages, e.g. via email link).
+    if (pathname === "/admin/login" && session.userId) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
     return res;
@@ -866,6 +1019,7 @@ export async function loginAction(_prev: LoginState, formData: FormData): Promis
   const session = await getSession();
   session.userId = user.id;
   session.username = user.username;
+  session.role = user.role;
   await session.save();
   redirect(next.startsWith("/admin") ? next : "/admin");
 }
@@ -943,6 +1097,11 @@ export default async function AdminLoginPage({
         <h1 className="text-2xl font-semibold text-stone-900 mb-2">JJ Properties Admin</h1>
         <p className="text-stone-600 mb-6 text-sm">Sign in with your staff credentials.</p>
         <LoginForm next={next ?? "/admin"} />
+        <p className="mt-4 text-sm">
+          <a href="/admin/forgot-password" className="text-stone-600 hover:underline">
+            Forgot your password?
+          </a>
+        </p>
       </div>
     </main>
   );
@@ -974,11 +1133,15 @@ Create `src/components/admin/AdminShell.tsx`:
 import Link from "next/link";
 import { signOutAction } from "@/app/admin/login/actions";
 
+import type { UserRole } from "@/types/crm";
+
 export default function AdminShell({
   username,
+  role,
   children,
 }: {
   username: string;
+  role: UserRole;
   children: React.ReactNode;
 }) {
   return (
@@ -990,8 +1153,10 @@ export default function AdminShell({
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link href="/admin" className="hover:text-stone-600">Inquiries</Link>
-            <Link href="/admin/users" className="hover:text-stone-600">Users</Link>
-            <span className="text-stone-500">{username}</span>
+            {role === "admin" && (
+              <Link href="/admin/users" className="hover:text-stone-600">Users</Link>
+            )}
+            <Link href="/admin/account" className="hover:text-stone-600">{username}</Link>
             <form action={signOutAction}>
               <button className="rounded-md border border-stone-300 px-3 py-1 text-sm hover:bg-stone-100">
                 Sign out
@@ -1015,9 +1180,13 @@ import AdminShell from "@/components/admin/AdminShell";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
-  // Login page renders bare (middleware lets it through when logged out).
+  // Login + password-reset pages render bare (middleware lets them through when logged out).
   if (!session.userId) return <>{children}</>;
-  return <AdminShell username={session.username ?? ""}>{children}</AdminShell>;
+  return (
+    <AdminShell username={session.username ?? ""} role={session.role ?? "staff"}>
+      {children}
+    </AdminShell>
+  );
 }
 ```
 
@@ -1208,12 +1377,12 @@ Create `src/app/admin/actions.ts`:
 ```ts
 "use server";
 import { revalidatePath } from "next/cache";
-import { requireSession } from "@/lib/auth/session";
+import { requireSession, requireAdmin } from "@/lib/auth/session";
 import { updateInquiry } from "@/lib/db/inquiries";
 import { createNote } from "@/lib/db/notes";
 import { createUser, removeUser } from "@/lib/db/users";
 import { hashPassword } from "@/lib/auth/password";
-import type { InquiryStatus } from "@/types/crm";
+import type { InquiryStatus, UserRole } from "@/types/crm";
 
 export async function setInquiryStatus(id: number, status: InquiryStatus) {
   await requireSession();
@@ -1237,20 +1406,26 @@ export async function addNote(inquiryId: number, body: string) {
   revalidatePath(`/admin/inquiries/${inquiryId}`);
 }
 
-export async function addStaffUser(username: string, email: string, password: string) {
-  const session = await requireSession();
+export async function addStaffUser(
+  username: string,
+  email: string,
+  password: string,
+  role: UserRole = "staff"
+) {
+  const session = await requireAdmin(); // admin-only
   const hash = await hashPassword(password);
   createUser({
     username: username.trim(),
     email: email.trim().toLowerCase(),
     password_hash: hash,
+    role,
     added_by: session.userId!,
   });
   revalidatePath("/admin/users");
 }
 
 export async function removeStaffUser(id: number) {
-  const session = await requireSession();
+  const session = await requireAdmin(); // admin-only
   if (session.userId === id) throw new Error("You cannot remove your own account.");
   removeUser(id);
   revalidatePath("/admin/users");
@@ -1363,6 +1538,10 @@ export default async function InquiryDetailPage({
           <div>
             <dt className="text-stone-500 text-xs uppercase tracking-wide">Property</dt>
             <dd>{inquiry.property_interest ?? "—"}</dd>
+          </div>
+          <div>
+            <dt className="text-stone-500 text-xs uppercase tracking-wide">Lead source</dt>
+            <dd>{inquiry.source_property ?? inquiry.source_page ?? "—"}</dd>
           </div>
         </dl>
         <div>
@@ -1486,13 +1665,14 @@ Create `src/app/admin/users/UsersTable.tsx`:
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { addStaffUser, removeStaffUser } from "@/app/admin/actions";
-import type { StaffUser } from "@/types/crm";
+import type { StaffUser, UserRole } from "@/types/crm";
 
 export default function UsersTable({ users }: { users: StaffUser[] }) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("staff");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -1504,8 +1684,8 @@ export default function UsersTable({ users }: { users: StaffUser[] }) {
     }
     startTransition(async () => {
       try {
-        await addStaffUser(username, email, password);
-        setUsername(""); setEmail(""); setPassword("");
+        await addStaffUser(username, email, password, role);
+        setUsername(""); setEmail(""); setPassword(""); setRole("staff");
         router.refresh();
       } catch (e) {
         setError(e instanceof Error ? e.message : "Could not add user.");
@@ -1527,10 +1707,21 @@ export default function UsersTable({ users }: { users: StaffUser[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-2 sm:grid-cols-[1fr,1fr,1fr,auto] sm:items-end">
+      <div className="grid gap-2 sm:grid-cols-[1fr,1fr,1fr,auto,auto] sm:items-end">
         <Field label="Username" value={username} onChange={setUsername} />
         <Field label="Email" value={email} onChange={setEmail} type="email" />
         <Field label="Password" value={password} onChange={setPassword} type="password" />
+        <label className="flex flex-col text-xs text-stone-600">
+          Role
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as UserRole)}
+            className="mt-1 rounded-md border border-stone-300 px-2 py-1 text-sm"
+          >
+            <option value="staff">staff</option>
+            <option value="admin">admin</option>
+          </select>
+        </label>
         <button
           disabled={pending}
           onClick={add}
@@ -1545,7 +1736,10 @@ export default function UsersTable({ users }: { users: StaffUser[] }) {
       <ul className="divide-y divide-stone-100 rounded-md border border-stone-200 bg-white">
         {users.map((u) => (
           <li key={u.id} className="flex items-center justify-between px-3 py-2 text-sm">
-            <span>{u.username} <span className="text-stone-500">· {u.email}</span></span>
+            <span>
+              {u.username} <span className="text-stone-500">· {u.email}</span>
+              <span className="ml-2 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-stone-600">{u.role}</span>
+            </span>
             <button onClick={() => remove(u.id)} className="text-xs text-red-600 hover:underline">
               Remove
             </button>
@@ -1582,18 +1776,20 @@ function Field({
 
 Create `src/app/admin/users/page.tsx`:
 ```tsx
+import { requireAdmin } from "@/lib/auth/session";
 import { listUsers } from "@/lib/db/users";
 import UsersTable from "./UsersTable";
 
 export const metadata = { title: "Users · JJ Properties Admin" };
 
 export default async function UsersPage() {
+  await requireAdmin(); // staff are redirected to /admin
   const users = listUsers();
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
         <h1 className="text-2xl font-semibold">Staff accounts</h1>
-        <p className="text-sm text-stone-600">Anyone listed here can sign in to the admin portal.</p>
+        <p className="text-sm text-stone-600">Anyone listed here can sign in to the admin portal. Only admins can manage accounts.</p>
       </div>
       <UsersTable users={users} />
     </div>
@@ -1616,7 +1812,119 @@ git commit -m "feat(crm): staff account management (add/remove via server action
 
 ---
 
-## Task 14: Lightsail deploy, SES, migration, seed, backups + final smoke
+## Task 14: Account — change password + forgot/reset password
+
+**Files:** Create `src/app/admin/account/page.tsx`, `src/app/admin/account/actions.ts`, `src/app/admin/account/AccountForm.tsx`; `src/app/admin/forgot-password/page.tsx`, `src/app/admin/forgot-password/actions.ts`; `src/app/admin/reset-password/page.tsx`, `src/app/admin/reset-password/actions.ts`.
+
+> Middleware already treats `/admin/forgot-password` and `/admin/reset-password` as public (Task 7). `/admin/account` is session-protected like the rest of `/admin`.
+
+- [ ] **Step 1: Change-password action (signed-in)**
+
+Create `src/app/admin/account/actions.ts`:
+```ts
+"use server";
+import { requireSession } from "@/lib/auth/session";
+import { getUserById, updateUserPassword } from "@/lib/db/users";
+import { hashPassword, verifyPassword } from "@/lib/auth/password";
+
+export interface AccountState { error?: string; ok?: boolean }
+
+export async function changePasswordAction(_prev: AccountState, formData: FormData): Promise<AccountState> {
+  const session = await requireSession();
+  const current = String(formData.get("current") ?? "");
+  const next = String(formData.get("next") ?? "");
+  if (next.length < 10) return { error: "New password must be at least 10 characters." };
+
+  const user = getUserById(session.userId!);
+  if (!user || !(await verifyPassword(current, user.password_hash))) {
+    return { error: "Current password is incorrect." };
+  }
+  updateUserPassword(user.id, await hashPassword(next));
+  return { ok: true };
+}
+```
+
+- [ ] **Step 2: Account form + page**
+
+Create `src/app/admin/account/AccountForm.tsx` (client, `useActionState`) with two password inputs (`current`, `next`) that calls `changePasswordAction`, shows `state.error` or a success message. Create `src/app/admin/account/page.tsx` (server component) — `await requireSession()`, render a heading + `<AccountForm />`. (Mirror the styling of `LoginForm`/`AdminShell`.)
+
+- [ ] **Step 3: Forgot-password action + page**
+
+Create `src/app/admin/forgot-password/actions.ts`:
+```ts
+"use server";
+import { getUserByEmail } from "@/lib/db/users";
+import { createReset } from "@/lib/db/passwordResets";
+import { generateResetToken, hashToken, expiryFromNow } from "@/lib/auth/token";
+import { sendPasswordResetEmail } from "@/lib/email";
+
+const GENERIC = { sent: true as const };
+
+export async function requestResetAction(_prev: unknown, formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim();
+  const user = email ? getUserByEmail(email) : null;
+  if (user) {
+    const token = generateResetToken();
+    createReset(hashToken(token), user.id, expiryFromNow(30));
+    const base = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+    const url = `${base}/admin/reset-password?token=${encodeURIComponent(token)}`;
+    try {
+      await sendPasswordResetEmail(user.email, url);
+    } catch (e) {
+      console.error("[reset] email failed:", e);
+    }
+  }
+  // Always generic — no account enumeration. (Consider rate-limiting by IP, reusing checkContactRateLimit.)
+  return GENERIC;
+}
+```
+Create `src/app/admin/forgot-password/page.tsx` (client form via a small wrapper, or server shell + client form): one email input → `requestResetAction`; after submit always show "If that account exists, a reset link is on the way."
+
+- [ ] **Step 4: Reset-password action + page**
+
+Create `src/app/admin/reset-password/actions.ts`:
+```ts
+"use server";
+import { redirect } from "next/navigation";
+import { consumeReset } from "@/lib/db/passwordResets";
+import { hashToken } from "@/lib/auth/token";
+import { updateUserPassword } from "@/lib/db/users";
+import { hashPassword } from "@/lib/auth/password";
+
+export interface ResetState { error?: string }
+
+export async function resetPasswordAction(_prev: ResetState, formData: FormData): Promise<ResetState> {
+  const token = String(formData.get("token") ?? "");
+  const next = String(formData.get("next") ?? "");
+  if (next.length < 10) return { error: "Password must be at least 10 characters." };
+
+  const userId = consumeReset(hashToken(token)); // validates exists/unused/unexpired, marks used
+  if (!userId) return { error: "This reset link is invalid or has expired." };
+
+  updateUserPassword(userId, await hashPassword(next));
+  redirect("/admin/login?reset=1");
+}
+```
+Create `src/app/admin/reset-password/page.tsx`: read `token` from `searchParams`, render a client form with a hidden `token` field and a new-password input calling `resetPasswordAction`; surface `state.error`.
+
+- [ ] **Step 5: Manual smoke**
+
+1. **Change password:** sign in → `/admin/account` → wrong current password rejected; correct current + new (10+) succeeds; sign out and back in with the new password.
+2. **Forgot/reset:** `/admin/forgot-password` with a real account email (local: set `EMAIL_PROVIDER=ses` with verified identity, or inspect the logged reset URL) → open the link → set a new password → redirected to login with `?reset=1` → sign in with the new password. Re-using the same link fails (single-use); an expired link fails.
+3. **Enumeration check:** submitting an unknown email shows the same generic message.
+4. **Role gate:** sign in as a `staff` user → the Users link is hidden and visiting `/admin/users` redirects to `/admin`; an `admin` sees and can use it.
+
+- [ ] **Step 6: Commit**
+
+```bash
+npx tsc --noEmit
+git add src/app/admin/account src/app/admin/forgot-password src/app/admin/reset-password
+git commit -m "feat(crm): change-password + forgot/reset-password flows"
+```
+
+---
+
+## Task 15: Lightsail deploy, SES, migration, seed, backups + final smoke
 
 **Files:** Create `deploy/README.md` (+ nginx/systemd snippets); modify `README.md`.
 
@@ -1658,7 +1966,7 @@ Expected: all pass. Fix before deploying.
    ```
    (Plus AWS keys if not using an instance role.)
 3. `npm run migrate` → creates the schema at `/var/lib/jj-crm/crm.db`.
-4. Seed the first admin: `node scripts/create-user.mjs admin <email> "<strong-password>"`.
+4. Seed the first admin: `node scripts/create-user.mjs admin <email> "<strong-password>" admin`.
 5. `npm run build` then `pm2 start npm --name jj-crm -- start` (Next listens on 3000); `pm2 save`.
 6. Configure nginx as a reverse proxy to `127.0.0.1:3000`; add TLS via `certbot` for the staging hostname.
 
@@ -1666,12 +1974,14 @@ Capture the box setup + nginx server block + pm2 commands in `deploy/README.md` 
 
 - [ ] **Step 5: End-to-end smoke on the box**
 
-1. Submit the public `/contact` form on the AWS copy.
-2. Confirm: SES email arrives at `LEAD_TO_EMAIL` **and** the row lands in `/var/lib/jj-crm/crm.db` (`sqlite3 ... "SELECT * FROM inquiries ORDER BY id DESC LIMIT 1;"`).
-3. Sign in at `/admin` → inquiry shows `new` + unread badge.
+1. Submit the public `/contact` form on the AWS copy from a property page.
+2. Confirm: staff SES email arrives at `LEAD_TO_EMAIL`, the **inquirer receives the acknowledgement**, **and** the row lands in `/var/lib/jj-crm/crm.db` with `source_page` / `source_property` populated (`sqlite3 ... "SELECT source_page, source_property FROM inquiries ORDER BY id DESC LIMIT 1;"`).
+3. Sign in at `/admin` → inquiry shows `new` + unread badge; detail page shows the lead source.
 4. Open it → badge clears; add a note; set status `contacted`.
 5. `/admin` default filter (`status=new`) no longer shows it; `status=all` shows `contacted`.
-6. Sign out → `/admin/login`; bad credentials are rejected.
+6. **Roles:** as the seeded admin, `/admin/users` works; create a `staff` user, sign in as them → Users link hidden, `/admin/users` redirects to `/admin`.
+7. **Password reset:** from `/admin/forgot-password`, request a link for the staff account → reset email arrives via SES → set a new password → sign in with it; the link is single-use.
+8. Sign out → `/admin/login`; bad credentials are rejected.
 
 - [ ] **Step 6: Backups**
 
@@ -1689,12 +1999,12 @@ Append to `README.md`:
 ```md
 ## Admin Portal (CRM)
 
-The CRM lives at `/admin`, gated by username/password (bcrypt + iron-session). Inquiries persist to SQLite; email goes through Amazon SES on AWS (Resend on the Vercel copy).
+The CRM lives at `/admin`, gated by username/password (bcrypt + iron-session) with `admin` and `staff` roles (only admins manage accounts). Staff can change their own password at `/admin/account` and reset a forgotten one via `/admin/forgot-password`. Inquiries persist to SQLite (with lead source) and trigger a staff notification plus an inquirer acknowledgement; email goes through Amazon SES on AWS (Resend on the Vercel copy).
 
 ### Local setup
-1. `cp .env.example .env.local` and fill `SESSION_SECRET` (32+ bytes). Leave `EMAIL_PROVIDER=resend` locally.
+1. `cp .env.example .env.local`; fill `SESSION_SECRET` (32+ bytes) and `NEXT_PUBLIC_SITE_URL`. Leave `EMAIL_PROVIDER=resend` locally (reset/ack emails need `ses` + a verified identity to actually send).
 2. `npm run migrate` — creates `./data/crm.db`.
-3. `node scripts/create-user.mjs <username> <email> <password>` — seed a login.
+3. `node scripts/create-user.mjs <username> <email> <password> admin` — seed an admin login.
 4. `PORT=3004 npm run dev`, then visit `/admin`.
 
 ### Production (AWS Lightsail)
@@ -1714,21 +2024,25 @@ git commit -m "docs(crm): deploy notes (Lightsail/SES/SQLite) and admin portal R
 
 ## Spec Coverage Self-Review
 
-- **Single shared workspace + account gate** → `users` table (Task 2/3), session middleware (Task 7), every `/admin` query/action requires a session (Tasks 9–13).
+- **Single shared workspace + account gate** → `users` table (Task 2/3), session middleware (Task 7), every `/admin` query/action requires a session (Tasks 9–14).
 - **Username/password auth (no magic link)** → password helper + session (Task 4), login/sign-out actions (Task 8), middleware (Task 7).
-- **App-layer access control (no RLS)** → middleware guards `/admin/**`; all mutations go through `requireSession()`-gated server actions (Tasks 11–13); SQLite is server-only (`import "server-only"`).
+- **Admin vs staff roles** *(v1 story)* → `role` column + `requireAdmin` (Tasks 2, 3, 4); session carries role (Tasks 4, 8); admin-gated user actions + page (Tasks 11, 13); role-aware nav (Task 9).
+- **Self password change + forgot/reset** *(v1 story)* → `password_resets` table + token helper (Tasks 2, 3, 4); SES reset email (Task 5); public reset routes in middleware (Task 7); account/forgot/reset pages + actions (Task 14).
+- **Auto-acknowledgement email** *(v1 story)* → ack builder (Task 5), best-effort send in `/api/contact` (Task 6).
+- **Lead-source capture** *(v1 story)* → `source_page`/`source_property` columns (Task 2), `createInquiry` + form hidden fields + `Referer` fallback (Tasks 3, 6), shown on detail page (Task 11).
+- **App-layer access control (no RLS)** → middleware guards `/admin/**`; all mutations go through `requireSession()` / `requireAdmin()`-gated server actions (Tasks 11–14); SQLite is server-only (`import "server-only"`).
 - **Existing email path preserved; CRM additive** → Task 5 keeps Resend as default and switches to SES only when `EMAIL_PROVIDER=ses`; Task 6 inserts before the (unchanged-signature) `sendContactEmail`.
-- **DB write before email; either failing is non-blocking the other** → Task 6 (best-effort insert in try/catch, then send).
+- **DB write before email; either failing is non-blocking the other** → Task 6 (best-effort insert in try/catch, then send, then best-effort ack).
 - **Inquiries with status + is_read + notes** → Tasks 2, 3, 11, 12.
-- **Pages**: `/admin/login`, `/admin`, `/admin/inquiries/[id]`, `/admin/users` → Tasks 8, 10, 11/12, 13. (No `/admin/auth/callback` — removed with magic link.)
+- **Pages**: `/admin/login`, `/admin/forgot-password`, `/admin/reset-password`, `/admin/account`, `/admin`, `/admin/inquiries/[id]`, `/admin/users` → Tasks 8, 14, 10, 11/12, 13. (No `/admin/auth/callback` — removed with magic link.)
 - **Filters: status, type, search** (property filter supported in data layer, UI deferred until slugs confirmed — flagged in Task 10) → Task 10.
-- **AWS hosting on Lightsail + SQLite + SES; Vercel stays live until cutover** → Task 14; `EMAIL_PROVIDER` switch (Task 5).
-- **Account ownership / handoff** → Task 14 (`deploy/README.md`, backups) + spec ownership section.
-- **Out-of-scope items** (reply-from-portal, audit log, assigned-to, Slack, CSV export, admin tier) → not implemented, matches spec.
+- **AWS hosting on Lightsail + SQLite + SES; Vercel stays live until cutover** → Task 15; `EMAIL_PROVIDER` switch (Task 5).
+- **Account ownership / handoff** → Task 15 (`deploy/README.md`, backups) + spec ownership section.
+- **Backlog (post-v1), not implemented** (reply-from-portal, reporting dashboard, audit log + soft delete) and **out-of-scope** (assignment + follow-up dates, multi-tenant, Slack/SMS, 2FA) → matches spec.
 
 **Open items to confirm during implementation:**
-- Exact field names from `contactSchema` (Task 6 maps `firstName`/`inquiryType`/`propertyInterest` — verify against `@/lib/validation/contact`).
-- The current `sendContactEmail` signature/content (Task 5 reuses its message builder).
-- Property-interest slug values, to enable the Property filter UI (Task 10).
+- Exact field names from `contactSchema` (Task 6 maps `firstName`/`inquiryType`/`propertyInterest` — verify against `@/lib/validation/contact`), and where to add the optional `sourcePage`/`sourceProperty` fields.
+- The current `sendContactEmail` signature/content (Task 5 reuses its message builder and the same provider-switch logic for ack/reset).
+- Property-interest slug values, to enable the Property filter UI (Task 10) and to populate `source_property` from property pages (Task 6).
 
 No placeholders, no contradictions, no undefined types or methods between tasks.
