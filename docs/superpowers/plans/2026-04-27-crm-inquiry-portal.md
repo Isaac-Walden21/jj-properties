@@ -299,9 +299,11 @@ git commit -m "feat(crm): SQLite schema, migration runner, and connection module
 
 ## Task 3: Domain types and data-access layer
 
+**Status: ✅ complete — commit `2ad93e1` (2026-06-06).**
+
 **Files:** Create `src/types/crm.ts`, `src/lib/db/inquiries.ts`, `src/lib/db/notes.ts`, `src/lib/db/users.ts`.
 
-- [ ] **Step 1: Types**
+- [x] **Step 1: Types**
 
 Create `src/types/crm.ts`:
 ```ts
@@ -353,7 +355,7 @@ export interface InquiryFilters {
 }
 ```
 
-- [ ] **Step 2: Inquiry queries**
+- [x] **Step 2: Inquiry queries**
 
 Create `src/lib/db/inquiries.ts`:
 ```ts
@@ -449,7 +451,7 @@ export function updateInquiry(
 }
 ```
 
-- [ ] **Step 3: Note queries**
+- [x] **Step 3: Note queries**
 
 Create `src/lib/db/notes.ts`:
 ```ts
@@ -485,7 +487,7 @@ export function createNote(inquiryId: number, authorId: number, body: string): I
 }
 ```
 
-- [ ] **Step 4: User queries**
+- [x] **Step 4: User queries**
 
 Create `src/lib/db/users.ts`:
 ```ts
@@ -555,7 +557,7 @@ export function countUsers(): number {
 }
 ```
 
-- [ ] **Step 5: Password-reset queries**
+- [x] **Step 5: Password-reset queries**
 
 Create `src/lib/db/passwordResets.ts`:
 ```ts
@@ -583,7 +585,7 @@ export function consumeReset(tokenHash: string): number | null {
 }
 ```
 
-- [ ] **Step 6: Type-check and commit**
+- [x] **Step 6: Type-check and commit**
 
 ```bash
 npx tsc --noEmit
