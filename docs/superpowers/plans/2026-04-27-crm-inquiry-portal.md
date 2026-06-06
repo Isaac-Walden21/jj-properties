@@ -597,9 +597,11 @@ git commit -m "feat(crm): domain types and SQLite data-access layer (roles, lead
 
 ## Task 4: Password + session helpers (TDD), and the user-creation script
 
+**Status: ✅ complete — commit `f2de40d` (2026-06-06).** vitest 3/3 under node v22.
+
 **Files:** Create `src/lib/auth/password.ts`, `src/lib/auth/password.test.ts`, `src/lib/auth/session.ts`, `scripts/create-user.mjs`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `src/lib/auth/password.test.ts`:
 ```ts
@@ -623,14 +625,14 @@ describe("password hashing", () => {
 });
 ```
 
-- [ ] **Step 2: Run to confirm it fails**
+- [x] **Step 2: Run to confirm it fails**
 
 ```bash
 npx vitest run src/lib/auth/password.test.ts
 ```
 Expected: FAIL — module not found.
 
-- [ ] **Step 3: Implement password helper**
+- [x] **Step 3: Implement password helper**
 
 Create `src/lib/auth/password.ts`:
 ```ts
@@ -649,14 +651,14 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 ```
 (No `server-only` import here so the test can import it directly; it has no DB/Next dependency.)
 
-- [ ] **Step 4: Run to confirm it passes**
+- [x] **Step 4: Run to confirm it passes**
 
 ```bash
 npx vitest run src/lib/auth/password.test.ts
 ```
 Expected: 3 passed.
 
-- [ ] **Step 5: Session helper**
+- [x] **Step 5: Session helper**
 
 Create `src/lib/auth/session.ts` (NO `server-only` import — middleware imports `sessionOptions`):
 ```ts
@@ -703,7 +705,7 @@ export async function requireAdmin() {
 }
 ```
 
-- [ ] **Step 6: Reset-token helper**
+- [x] **Step 6: Reset-token helper**
 
 Create `src/lib/auth/token.ts`:
 ```ts
@@ -725,7 +727,7 @@ export function expiryFromNow(minutes: number): string {
 }
 ```
 
-- [ ] **Step 7: User-creation script (bootstrap + handoff)**
+- [x] **Step 7: User-creation script (bootstrap + handoff)**
 
 Create `scripts/create-user.mjs` (4th arg = role, defaults to `admin` so the bootstrap user can manage accounts):
 ```js
@@ -754,7 +756,7 @@ db.prepare(
 console.log(`Created ${role} '${username}' (${email}) in ${dbPath}`);
 ```
 
-- [ ] **Step 8: Seed a local admin and commit**
+- [x] **Step 8: Seed a local admin and commit**
 
 ```bash
 SQLITE_DB_PATH=./data/crm.db node scripts/create-user.mjs admin isaac@twenty1-media.com "ChangeMe-2026!" admin
