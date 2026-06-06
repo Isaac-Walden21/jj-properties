@@ -67,9 +67,11 @@
 
 ## Task 1: Install dependencies and scaffold env
 
+**Status: ✅ complete — commit `dd3eede` (2026-06-06).** Note: `better-sqlite3`'s native binary only loads under **nvm node v22**, not Codex.app's hardened-runtime node — prefix node/npm/tsc/dev commands with `PATH="$HOME/.nvm/versions/node/v22.20.0/bin:$PATH"` (or `nvm use 22`).
+
 **Files:** Modify `package.json`, `.gitignore`, `.env.example`; create `data/` (gitignored).
 
-- [ ] **Step 1: Remove Supabase deps, add the AWS-stack deps**
+- [x] **Step 1: Remove Supabase deps, add the AWS-stack deps**
 
 ```bash
 cd /Users/asherwalden/Desktop/JJ-Properties
@@ -79,7 +81,7 @@ npm install -D @types/better-sqlite3 @types/bcryptjs vitest
 ```
 Expected: `dependencies` gains the four runtime packages; Supabase packages gone; lockfile updated.
 
-- [ ] **Step 2: Add scripts to `package.json`**
+- [x] **Step 2: Add scripts to `package.json`**
 
 ```json
 "scripts": {
@@ -90,7 +92,7 @@ Expected: `dependencies` gains the four runtime packages; Supabase packages gone
 ```
 (Keep existing `dev` / `build` / `start` / `lint`.)
 
-- [ ] **Step 3: Rewrite `.env.example`**
+- [x] **Step 3: Rewrite `.env.example`**
 
 ```bash
 # Email provider: "resend" (Vercel copy) or "ses" (AWS copy)
@@ -118,7 +120,7 @@ BCRYPT_COST=12
 NEXT_PUBLIC_SITE_URL=http://localhost:3004
 ```
 
-- [ ] **Step 4: Gitignore local DB**
+- [x] **Step 4: Gitignore local DB**
 
 Ensure `.gitignore` contains:
 ```
@@ -129,13 +131,13 @@ data/
 ```
 Also confirm `.env*` (except `.env.example`) is ignored: `grep -E "^\.env" .gitignore`.
 
-- [ ] **Step 5: Create local data dir**
+- [x] **Step 5: Create local data dir**
 
 ```bash
 mkdir -p data
 ```
 
-- [ ] **Step 6: Externalize `better-sqlite3` from the bundler**
+- [x] **Step 6: Externalize `better-sqlite3` from the bundler**
 
 In `next.config.ts` (or `.mjs`), add to the config object:
 ```ts
@@ -143,7 +145,7 @@ serverExternalPackages: ["better-sqlite3"],
 ```
 (Prevents Turbopack/webpack from trying to bundle the native module.)
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add package.json package-lock.json .env.example .gitignore next.config.*
