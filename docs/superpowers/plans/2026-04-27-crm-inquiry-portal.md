@@ -1004,9 +1004,11 @@ git commit -m "feat(crm): protect /admin routes with session middleware"
 
 ## Task 8: Login page + login/sign-out actions
 
+**Status: ✅ complete — commit `5caf232` (2026-06-06).** Full login click-through verified in Task 9/10.
+
 **Files:** Create `src/app/admin/login/page.tsx`, `src/app/admin/login/LoginForm.tsx`, `src/app/admin/login/actions.ts`.
 
-- [ ] **Step 1: Login + sign-out server actions**
+- [x] **Step 1: Login + sign-out server actions**
 
 Create `src/app/admin/login/actions.ts`:
 ```ts
@@ -1046,7 +1048,7 @@ export async function signOutAction() {
 }
 ```
 
-- [ ] **Step 2: Login form (client, `useActionState`)**
+- [x] **Step 2: Login form (client, `useActionState`)**
 
 Create `src/app/admin/login/LoginForm.tsx`:
 ```tsx
@@ -1092,7 +1094,7 @@ export default function LoginForm({ next }: { next: string }) {
 }
 ```
 
-- [ ] **Step 3: Login page shell**
+- [x] **Step 3: Login page shell**
 
 Create `src/app/admin/login/page.tsx`:
 ```tsx
@@ -1123,12 +1125,12 @@ export default async function AdminLoginPage({
 }
 ```
 
-- [ ] **Step 4: Manual smoke**
+- [x] **Step 4: Manual smoke**
 
 1. Visit `/admin/login`, enter the seeded `admin` / `ChangeMe-2026!` → redirects to `/admin` (may 404 until Task 9 — auth is what we are testing).
 2. Wrong password → "Invalid username or password." and no redirect.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app/admin/login
