@@ -38,6 +38,7 @@ export function ContactForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ContactInput>({
     resolver: zodResolver(contactSchema),
@@ -50,8 +51,15 @@ export function ContactForm() {
       propertyInterest: defaultProperty ?? "",
       message: "",
       honeypot: "",
+      sellAskingPrice: "",
+      sellCondition: "",
+      sellWalkaway: "",
     },
   });
+
+  // Show the sell-specific questions only when the visitor is inquiring about
+  // selling a property.
+  const isSell = watch("inquiryType") === "sell";
 
   async function onSubmit(data: ContactInput) {
     setServerError(null);
@@ -152,6 +160,34 @@ export function ContactForm() {
           {...register("propertyInterest")}
         />
       </div>
+
+      {/* Sell-a-property questions — only shown for "sell" inquiries (TWE-132) */}
+      {isSell && (
+        <div className="mt-5 space-y-5 rounded-xl border border-navy/10 bg-sand-light p-5">
+          <p className="text-sm font-semibold text-navy">
+            A few details about your property
+          </p>
+          <InputField
+            label="How much are you looking to get for the property?"
+            placeholder="e.g. $1,200,000"
+            error={errors.sellAskingPrice?.message}
+            {...register("sellAskingPrice")}
+          />
+          <TextAreaField
+            label="What is the general condition? Any deferred maintenance?"
+            rows={3}
+            placeholder="Tell us about the property's condition and any known maintenance needs..."
+            error={errors.sellCondition?.message}
+            {...register("sellCondition")}
+          />
+          <InputField
+            label="What amount could you receive for the property and still be happy?"
+            placeholder="e.g. $1,000,000"
+            error={errors.sellWalkaway?.message}
+            {...register("sellWalkaway")}
+          />
+        </div>
+      )}
 
       <div className="mt-5">
         <TextAreaField

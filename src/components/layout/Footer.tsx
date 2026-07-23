@@ -11,7 +11,7 @@ export function Footer() {
         <div className="flex flex-col gap-3">
           <Link href="/" className="transition-colors hover:text-gold">
             <span className="font-display text-xl font-bold tracking-tight">
-              JJ Properties
+              J & J Resort Properties
             </span>
           </Link>
           <p className="text-sm leading-relaxed text-stone">

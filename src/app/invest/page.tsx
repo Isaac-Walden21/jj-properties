@@ -16,7 +16,7 @@ export default function InvestPage() {
       />
 
       <ValuePropSection
-        title="Why Partner with JJ Resort Properties"
+        title="Why Partner with J & J Resort Properties"
         intro="Michigan's Upper Peninsula is one of the Midwest's best-kept secrets — and the tourism market is growing. Our commitment extends beyond the transaction. We remain dedicated to supporting our partners' success and fostering ongoing growth in the hospitality industry."
         benefits={[
           "Proven portfolio of revenue-generating properties",
