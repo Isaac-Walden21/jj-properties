@@ -1,5 +1,5 @@
 export const site = {
-  name: "JJ Resort Properties",
+  name: "J & J Resort Properties",
   tagline: "Upper Peninsula Hospitality",
   siteUrl: "https://www.jjproperties.com",
 
@@ -15,7 +15,7 @@ export const site = {
     sell: {
       headline: "Sell Your Resort or Hotel",
       subheadline:
-        "If you're looking to sell your resort or hotel in Northern Michigan, you've come to the right place. JJ Resort Properties specializes in acquiring hospitality properties across the Upper Peninsula — no agents, no fees, no hassle.",
+        "If you're looking to sell your resort or hotel in Northern Michigan, you've come to the right place. J & J Resort Properties specializes in acquiring hospitality properties across the Upper Peninsula.",
       cta: { label: "Get Your Offer", href: "/contact?type=sell" },
     },
     invest: {
@@ -25,7 +25,7 @@ export const site = {
       cta: { label: "Start a Conversation", href: "/contact?type=invest" },
     },
     about: {
-      headline: "About JJ Resort Properties",
+      headline: "About J & J Resort Properties",
       subheadline:
         "Jeff and Jack are two cousins who left their corporate careers to combine their passions for real estate and Northern Michigan. What started with a single resort has grown into five distinctive properties across the Upper Peninsula.",
     },

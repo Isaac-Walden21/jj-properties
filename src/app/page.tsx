@@ -25,7 +25,7 @@ export default function HomePage() {
         ctaHref="/properties"
         image={{
           src: "/JJ-resort-property-maps.png",
-          alt: "Map showing JJ Properties resort locations across Michigan's Upper Peninsula",
+          alt: "Map showing J & J Resort Properties locations across Michigan's Upper Peninsula",
         }}
       />
 
@@ -35,7 +35,7 @@ export default function HomePage() {
         intro={site.pages.sell.subheadline}
         benefits={[
           "We acquire properties at fair market value",
-          "Quick, hassle-free closings — no agents, no fees",
+          "Hassle-free closings on your timeline",
           "We buy properties in as-is condition",
           "Confidential evaluation process",
         ]}

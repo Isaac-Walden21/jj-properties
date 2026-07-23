@@ -36,7 +36,7 @@ export async function sendContactEmail(
   }
 
   const inquiryLabel = capitalize(payload.inquiryType);
-  const subject = `[JJ Resort Properties] ${inquiryLabel} Inquiry`;
+  const subject = `[J & J Resort Properties] ${inquiryLabel} Inquiry`;
 
   const lines = [
     `Request ID: ${requestId}`,
@@ -46,10 +46,20 @@ export async function sendContactEmail(
     `Phone: ${payload.phone || "Not provided"}`,
     `Inquiry Type: ${inquiryLabel}`,
     `Property Interest: ${payload.propertyInterest || "None specified"}`,
-    "",
-    "Message:",
-    payload.message,
   ];
+
+  // Sell-a-property detail fields — only relevant for "sell" inquiries (TWE-132).
+  if (payload.inquiryType === "sell") {
+    lines.push(
+      "",
+      "Sell-a-Property Details:",
+      `- Asking price: ${payload.sellAskingPrice || "Not provided"}`,
+      `- Condition / deferred maintenance: ${payload.sellCondition || "Not provided"}`,
+      `- Would be happy with: ${payload.sellWalkaway || "Not provided"}`
+    );
+  }
+
+  lines.push("", "Message:", payload.message);
 
   const resend = getResendClient();
 

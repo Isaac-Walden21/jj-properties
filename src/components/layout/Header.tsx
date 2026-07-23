@@ -69,7 +69,7 @@ export function Header() {
       <div className="mx-auto flex w-[min(1500px,92vw)] items-center justify-between gap-6 py-3">
         <Link href="/" className="group shrink-0">
           <span className="font-display text-lg font-bold tracking-tight text-navy transition-colors group-hover:text-gold sm:text-xl">
-            JJ Properties
+            J & J Resort Properties
           </span>
         </Link>
 

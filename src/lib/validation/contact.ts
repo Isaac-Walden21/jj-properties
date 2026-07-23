@@ -36,6 +36,11 @@ export const contactSchema = z.object({
     .min(1, "Message is required")
     .max(1000, "Message must be 1,000 characters or fewer"),
   honeypot: z.string().optional(),
+  // Sell-a-property detail fields — shown/captured only when inquiryType === "sell".
+  // Optional so buy/invest/general submissions still validate.
+  sellAskingPrice: z.string().trim().max(200).optional().or(z.literal("")),
+  sellCondition: z.string().trim().max(1000).optional().or(z.literal("")),
+  sellWalkaway: z.string().trim().max(200).optional().or(z.literal("")),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;

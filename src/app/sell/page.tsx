@@ -31,9 +31,9 @@ const steps = [
 
 const faqs = [
   {
-    question: "Why shouldn't I just list with a real estate agent?",
+    question: "Why shouldn't I just list with a real estate agent I've used in the past?",
     answer:
-      "You're welcome to, but most agents are limited in their ability to market a unique hospitality property outside their small geographic area — which can mean a long process to find a serious buyer. When you sell to us, there are no agent fees (typically ~6%), and we recommend you spend a fraction of that on an attorney to review all the paperwork instead.",
+      "You're welcome to, but most agents are limited in their ability to market a unique hospitality property outside their small geographic area — which can mean a long process to find a serious buyer. When you sell directly to us, we recommend spending a small amount on an attorney to review all the paperwork so you're fully protected throughout the process.",
   },
   {
     question: "How do you determine what my property is worth?",
@@ -62,15 +62,13 @@ export default function SellPage() {
       />
 
       <ValuePropSection
-        title="Why Sell to JJ Resort Properties"
+        title="Why Sell to J & J Resort Properties"
         intro="With ownership of multiple resorts and hotels, we have a proven track record of successfully acquiring and operating hospitality properties. We understand the unique challenges of running a hospitality business and are committed to preserving the hard work you've invested in building your property's reputation."
         benefits={[
-          "No broker fees or hidden costs — ever",
           "We buy properties in as-is condition",
           "Confidential process from first conversation to closing",
-          "Quick timelines — we close when you're ready",
+          "Your timeline — we close when you're ready",
           "We preserve the legacy and character of your property",
-          "Customized solutions tailored to your specific needs",
         ]}
         ctaLabel={site.pages.sell.cta.label}
         ctaHref="/contact?type=sell"

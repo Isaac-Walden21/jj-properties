@@ -18,7 +18,7 @@ export function createPageMetadata(route: string): Metadata {
       title: seo.title,
       description: seo.description,
       url,
-      siteName: "JJ Resort Properties",
+      siteName: "J & J Resort Properties",
       images: [{ url: seo.ogImage, width: 1200, height: 630 }],
       locale: "en_US",
       type: "website",
