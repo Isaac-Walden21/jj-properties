@@ -86,6 +86,12 @@ export async function POST(request: Request) {
         source_page: sourcePage,
         source_property: sourceProperty,
         message: data.message,
+        sell_asking_price:
+          data.inquiryType === "sell" ? data.sellAskingPrice || null : null,
+        sell_condition:
+          data.inquiryType === "sell" ? data.sellCondition || null : null,
+        sell_walkaway:
+          data.inquiryType === "sell" ? data.sellWalkaway || null : null,
       });
     } catch (dbErr) {
       console.error("[contact] DB insert failed:", dbErr);

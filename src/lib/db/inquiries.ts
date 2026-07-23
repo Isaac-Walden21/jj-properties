@@ -21,16 +21,28 @@ export function createInquiry(input: {
   source_page: string | null;
   source_property: string | null;
   message: string;
+  sell_asking_price?: string | null;
+  sell_condition?: string | null;
+  sell_walkaway?: string | null;
 }): number {
   const stmt = getDb().prepare(
     `INSERT INTO inquiries
        (request_id, first_name, last_name, email, phone, inquiry_type,
-        property_interest, source_page, source_property, message)
+        property_interest, source_page, source_property, message,
+        sell_asking_price, sell_condition, sell_walkaway)
      VALUES
        (@request_id, @first_name, @last_name, @email, @phone, @inquiry_type,
-        @property_interest, @source_page, @source_property, @message)`
+        @property_interest, @source_page, @source_property, @message,
+        @sell_asking_price, @sell_condition, @sell_walkaway)`
   );
-  return Number(stmt.run(input).lastInsertRowid);
+  return Number(
+    stmt.run({
+      sell_asking_price: null,
+      sell_condition: null,
+      sell_walkaway: null,
+      ...input,
+    }).lastInsertRowid
+  );
 }
 
 export function listInquiries(filters: InquiryFilters): Inquiry[] {

@@ -16,7 +16,7 @@ export default function AdminShell({
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <Link href="/admin" className="font-semibold tracking-tight">
-            JJ Properties · Admin
+            J & J Resort Properties · Admin
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link href="/admin" className="hover:text-stone-600">Inquiries</Link>

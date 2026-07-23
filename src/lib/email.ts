@@ -113,9 +113,9 @@ export async function sendContactEmail(payload: ContactInput, requestId: string)
  * Auto-acknowledgement sent to the inquirer after they submit the form.
  */
 export async function sendInquiryAck(data: ContactInput): Promise<void> {
-  const subject = "We received your message · JJ Properties";
-  const text = `Hi ${data.firstName},\n\nThanks for reaching out to JJ Properties — we've received your message and will be in touch shortly.\n\n— JJ Properties`;
-  const html = `<p>Hi ${data.firstName},</p><p>Thanks for reaching out to JJ Properties — we've received your message and will be in touch shortly.</p><p>— JJ Properties</p>`;
+  const subject = "We received your message · J & J Resort Properties";
+  const text = `Hi ${data.firstName},\n\nThanks for reaching out to J & J Resort Properties — we've received your message and will be in touch shortly.\n\n— J & J Resort Properties`;
+  const html = `<p>Hi ${data.firstName},</p><p>Thanks for reaching out to J & J Resort Properties — we've received your message and will be in touch shortly.</p><p>— J & J Resort Properties</p>`;
   await sendEmail({ to: data.email, subject, html, text });
 }
 
@@ -123,7 +123,7 @@ export async function sendInquiryAck(data: ContactInput): Promise<void> {
  * Password-reset link emailed to a staff account.
  */
 export async function sendPasswordResetEmail(to: string, resetUrl: string): Promise<void> {
-  const subject = "Reset your JJ Properties admin password";
+  const subject = "Reset your J & J Resort Properties admin password";
   const text = `Use this link to reset your password (valid 30 minutes):\n${resetUrl}\n\nIf you didn't request this, ignore this email.`;
   const html = `<p>Use this link to reset your password (valid 30 minutes):</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you didn't request this, ignore this email.</p>`;
   await sendEmail({ to, subject, html, text });

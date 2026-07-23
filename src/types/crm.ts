@@ -14,6 +14,10 @@ export interface Inquiry {
   source_page: string | null;
   source_property: string | null;
   message: string;
+  // Sell-a-property detail fields (only set when inquiry_type === "sell")
+  sell_asking_price: string | null;
+  sell_condition: string | null;
+  sell_walkaway: string | null;
   status: InquiryStatus;
   is_read: boolean;
   request_id: string;
