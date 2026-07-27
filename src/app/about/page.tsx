@@ -76,7 +76,7 @@ export default function AboutPage() {
               </p>
               <p className="mt-4 text-base leading-relaxed text-navy/80 md:text-lg">
                 Today, J & J Resort Properties operates five distinctive hotels, resorts,
-                and inns across Michigan&apos;s Upper Peninsula — each with its
+                and inns across Northern Michigan — each with its
                 own character, all united by a commitment to genuine U.P.
                 hospitality and a deep appreciation for the region&apos;s natural
                 beauty.

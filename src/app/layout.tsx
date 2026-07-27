@@ -47,11 +47,11 @@ function OrganizationSchema() {
     description: site.hero.subheadline,
     foundingLocation: {
       "@type": "Place",
-      name: "Michigan's Upper Peninsula",
+      name: "Northern Michigan",
     },
     areaServed: {
       "@type": "Place",
-      name: "Upper Peninsula, Michigan",
+      name: "Northern Michigan",
     },
     industry: "Hospitality",
     sameAs: [],

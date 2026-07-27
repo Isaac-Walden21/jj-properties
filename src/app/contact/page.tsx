@@ -73,7 +73,7 @@ export default function ContactPage() {
                       <p className="text-sm text-navy/70">
                         Cedarville, Michigan
                         <br />
-                        Upper Peninsula
+                        Northern Michigan
                       </p>
                     </div>
                   </div>

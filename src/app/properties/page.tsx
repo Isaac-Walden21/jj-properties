@@ -15,7 +15,7 @@ export default function PropertiesPage() {
       <PageIntro
         kicker="Portfolio"
         title="Our Properties"
-        intro="From island resorts to small-town inns, our collection spans the best of Michigan's Upper Peninsula. Each property is unique, but they all share a commitment to genuine hospitality and the natural beauty of the U.P."
+        intro="From island resorts to small-town inns, our collection spans the best of Northern Michigan. Each property is unique, but they all share a commitment to genuine hospitality and the natural beauty of the U.P."
       />
 
       <section className="section-shell">

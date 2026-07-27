@@ -63,7 +63,7 @@ export function Footer() {
                 (248) 894-4867
               </a>
             </li>
-            <li className="text-sand/50">Upper Peninsula, Michigan</li>
+            <li className="text-sand/50">Northern Michigan</li>
           </ul>
         </div>
       </div>

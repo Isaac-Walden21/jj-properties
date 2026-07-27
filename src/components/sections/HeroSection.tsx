@@ -16,7 +16,7 @@ import { properties } from "@/content/properties";
 const heroImages = [
   { src: "/hero/hero-1.jpg", alt: "Lakeside vacation on Mackinac Island", position: "center" },
   { src: "/hero/hero-2.jpg", alt: "Northern Michigan resort scenery", position: "center bottom" },
-  { src: "/hero/hero-3.jpg", alt: "Upper Peninsula waterfront", position: "center" },
+  { src: "/hero/hero-3.jpg", alt: "Northern Michigan waterfront", position: "center" },
   { src: "/hero/hero-4.jpg", alt: "Aerial view of Les Cheneaux Islands", position: "center" },
 ];
 

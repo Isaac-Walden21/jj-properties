@@ -14,7 +14,7 @@ export default function HomePage() {
       {/* Stay with Us */}
       <ValuePropSection
         title="Stay with Us"
-        intro="Five properties across Michigan's Upper Peninsula — from island resorts to small-town inns. Each one offers genuine U.P. hospitality and a connection to the region's natural beauty."
+        intro="Five properties across Northern Michigan — from island resorts to small-town inns. Each one offers genuine U.P. hospitality and a connection to the region's natural beauty."
         benefits={[
           "Waterfront resorts, cozy inns, and modern suites",
           "Year-round activities from fishing to snowshoeing",
@@ -25,7 +25,7 @@ export default function HomePage() {
         ctaHref="/properties"
         image={{
           src: "/JJ-resort-property-maps.png",
-          alt: "Map showing J & J Resort Properties locations across Michigan's Upper Peninsula",
+          alt: "Map showing J & J Resort Properties locations across Northern Michigan",
         }}
       />
 
@@ -44,7 +44,7 @@ export default function HomePage() {
         reversed
         image={{
           src: "/images/cedarville-bay.jpg",
-          alt: "Cedarville Bay waterfront in Michigan's Upper Peninsula",
+          alt: "Cedarville Bay waterfront in Northern Michigan",
         }}
       />
 
@@ -62,7 +62,7 @@ export default function HomePage() {
         ctaHref="/invest"
         image={{
           src: "/images/year-round-adventure.jpg",
-          alt: "Year-round adventure in Michigan's Upper Peninsula",
+          alt: "Year-round adventure in Northern Michigan",
         }}
       />
 
