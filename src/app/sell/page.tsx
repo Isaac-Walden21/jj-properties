@@ -74,7 +74,7 @@ export default function SellPage() {
         ctaHref="/contact?type=sell"
         image={{
           src: "/images/relax-and-recharge.jpg",
-          alt: "Quiet hospitality setting in Michigan's Upper Peninsula",
+          alt: "Quiet hospitality setting in Northern Michigan",
         }}
       />
 

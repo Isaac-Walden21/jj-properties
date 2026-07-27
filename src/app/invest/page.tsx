@@ -17,7 +17,7 @@ export default function InvestPage() {
 
       <ValuePropSection
         title="Why Partner with J & J Resort Properties"
-        intro="Michigan's Upper Peninsula is one of the Midwest's best-kept secrets — and the tourism market is growing. Our commitment extends beyond the transaction. We remain dedicated to supporting our partners' success and fostering ongoing growth in the hospitality industry."
+        intro="Northern Michigan is one of the Midwest's best-kept secrets — and the tourism market is growing. Our commitment extends beyond the transaction. We remain dedicated to supporting our partners' success and fostering ongoing growth in the hospitality industry."
         benefits={[
           "Proven portfolio of revenue-generating properties",
           "Growing tourism market with year-round demand",
@@ -30,13 +30,13 @@ export default function InvestPage() {
         ctaHref="/contact?type=invest"
         image={{
           src: "/images/les-cheneaux-islands.jpeg",
-          alt: "Les Cheneaux Islands in Michigan's Upper Peninsula",
+          alt: "Les Cheneaux Islands in Northern Michigan",
         }}
       />
 
       <CTABanner
         title="Let's Explore the Opportunity"
-        description="We're always open to conversations with aligned partners who share our vision for Upper Peninsula hospitality. No matter where you are in the process, we'd love to hear from you."
+        description="We're always open to conversations with aligned partners who share our vision for Northern Michigan hospitality. No matter where you are in the process, we'd love to hear from you."
         ctaLabel="Get in Touch"
         ctaHref="/contact?type=invest"
         variant="navy"
