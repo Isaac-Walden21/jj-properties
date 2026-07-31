@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { seoByRoute } from "@/content/seo";
-
-const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.jjproperties.com";
+import { SITE_URL as BASE_URL } from "@/lib/site-url";
 
 export function createPageMetadata(route: string): Metadata {
   const seo = seoByRoute[route] ?? seoByRoute["/404"]!;

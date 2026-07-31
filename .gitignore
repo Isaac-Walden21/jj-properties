@@ -43,3 +43,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local CRM database — contains real customer inquiries, never commit
+/data
+*.db
+*.sqlite
+*.sqlite3
