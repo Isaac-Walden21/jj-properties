@@ -4,7 +4,7 @@ export const properties: Property[] = [
   {
     slug: "papins-resort",
     name: "Papin's Resort",
-    tagline: "Where Lake Michigan meets the wild north",
+    tagline: "Where Lake Huron meets the wild north",
     type: "resort",
     location: "Drummond, MI",
     image: {
@@ -35,7 +35,7 @@ export const properties: Property[] = [
     location: "Indian River, MI",
     image: {
       src: "/waterway-inn.jpg",
-      alt: "Waterway Inn along the Cedarville waterway",
+      alt: "Waterway Inn along the Inland Waterway in Indian River",
     },
     bookingUrl: "https://waterwayinnir.com",
     externalUrl: "https://waterwayinnir.com",

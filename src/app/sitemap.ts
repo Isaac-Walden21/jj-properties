@@ -1,8 +1,5 @@
 import type { MetadataRoute } from "next";
-import { properties } from "@/content/properties";
-
-const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.jjproperties.com";
+import { SITE_URL as BASE_URL } from "@/lib/site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
@@ -14,13 +11,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/contact",
   ];
 
-  const propertyRoutes = properties.map(
-    (p) => `/properties/${p.slug}`
-  );
-
-  const allRoutes = [...staticRoutes, ...propertyRoutes];
-
-  return allRoutes.map((route) => ({
+  // No per-property routes here. There is no /properties/[slug] page — the
+  // /properties index links straight out to each property's own site — so
+  // emitting them advertised five 404s to search engines (TWE-194). If detail
+  // pages are ever built, add the routes back alongside them.
+  return staticRoutes.map((route) => ({
     url: `${BASE_URL}${route}`,
     lastModified: new Date(),
     changeFrequency: route === "/" ? "weekly" : "monthly",
