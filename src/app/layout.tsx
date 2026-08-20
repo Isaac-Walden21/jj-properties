@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
-import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { PageTransition } from "@/components/layout/PageTransition";
-import { ScrollToTopButton } from "@/components/layout/ScrollToTopButton";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { site } from "@/content/site";
 
 import "./globals.css";
@@ -76,12 +74,12 @@ export default function RootLayout({
         <OrganizationSchema />
       </head>
       <body className="font-body antialiased">
-        <Header />
-        <PageTransition>
-          <main>{children}</main>
-        </PageTransition>
-        <ScrollToTopButton />
-        <Footer />
+        {/*
+          SiteChrome decides whether this route gets the public header, footer
+          and <main>. /admin/* and /u/* bring their own shell -- see the
+          component for why.
+        */}
+        <SiteChrome footer={<Footer />}>{children}</SiteChrome>
         <Analytics />
       </body>
     </html>

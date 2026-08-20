@@ -100,3 +100,21 @@ export function updateInquiry(
   if (!sets.length) return;
   getDb().prepare(`UPDATE inquiries SET ${sets.join(", ")} WHERE id = @id`).run(params);
 }
+
+/**
+ * Totals for the admin launcher.
+ *
+ * A count rather than `listInquiries(...).length`: that caps at 200 rows, so
+ * past 200 inquiries the length would quietly stop being the real number.
+ */
+export function countInquiries(): { total: number; unread: number } {
+  return getDb()
+    .prepare(
+      // COALESCE because SUM over zero rows is NULL, not 0 -- on an empty
+      // table the launcher would render a blank where a number belongs.
+      `SELECT COUNT(*) AS total,
+              COALESCE(SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END), 0) AS unread
+       FROM inquiries`
+    )
+    .get() as { total: number; unread: number };
+}
