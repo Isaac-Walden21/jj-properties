@@ -34,3 +34,29 @@ function resolveSiteUrl(): string {
 }
 
 export const SITE_URL = resolveSiteUrl();
+
+/**
+ * Hosts that are allowed to be indexed by search engines.
+ *
+ * Everything else the site is reachable on — the nip.io origin it runs on until
+ * the client buys the real domain, the old *.vercel.app host, localhost — must
+ * stay out of the index. This is deliberately keyed off the canonical origin
+ * rather than a separate NEXT_PUBLIC_INDEXABLE flag: one variable to set at
+ * cutover instead of two, and the pair cannot drift out of step.
+ *
+ * It fails closed. An unrecognised host is treated as not-production and gets a
+ * blanket disallow, so the cost of forgetting to update this list is an
+ * unindexed site, not a duplicate of the whole site indexed on a junk origin.
+ *
+ * Add the real domain here at cutover — see TWE-114 (which domain) and TWE-211
+ * (the *.vercel.app host was publicly indexable; same failure, different host).
+ */
+const INDEXABLE_HOSTS = ["jjresortproperties.com", "www.jjresortproperties.com"];
+
+export const IS_INDEXABLE = (() => {
+  try {
+    return INDEXABLE_HOSTS.includes(new URL(SITE_URL).hostname);
+  } catch {
+    return false;
+  }
+})();
