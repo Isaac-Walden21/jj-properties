@@ -8,6 +8,9 @@
 - Verified: robots.txt `Allow: /` + sitemap on real origin, canonical + og:url on real origin, no X-Robots-Tag. The nip.io vhost keeps its noindex header on purpose.
 - **Memory gotcha:** box sits ~530-580MB available; deploy floor is 700MB. Stop `jjproperties` first (frees ~250MB), then `deploy.sh jjproperties deploy --yes --auto-rollback`, then make sure it is active again.
 - Not done: live contact-form test (emails the client inbox — Isaac's call). Stray 404 for `/_vercel/insights/script.js` in console (Vercel Analytics leftover, harmless).
+- 2026-09-24 later: contact-form leads now go to Jack (jack.schiefelbein@yahoo.com), Jeff (jeff.lipple@gmail.com) AND
+  JJResortProperties@gmail.com — `LEAD_TO_EMAIL` is comma-separated (code in `src/lib/email.ts`). Release 20260924-155104.
+  Not yet proven by a real submission.
 - Branch `cutover/jjresortproperties` holds this + the PUBLIC_ORIGIN change; not yet merged to main.
 
 
