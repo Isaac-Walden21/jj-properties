@@ -65,7 +65,8 @@ export async function sendContactEmail(
 
   const { error } = await resend.emails.send({
     from,
-    to,
+    // LEAD_TO_EMAIL may list several addresses, comma-separated (Jack, Jeff, the shared inbox).
+    to: to.split(",").map((a) => a.trim()).filter(Boolean),
     replyTo: payload.email,
     subject,
     text: lines.join("\n"),
