@@ -1,16 +1,10 @@
--- Claude connector: OAuth clients (registered by Claude via DCR), single-use
--- authorization codes, and access/refresh tokens. Codes and tokens are stored
--- as SHA-256 hashes, never raw. All times are epoch ms.
-CREATE TABLE IF NOT EXISTS oauth_clients (
-  client_id     TEXT    PRIMARY KEY,
-  client_name   TEXT,
-  redirect_uris TEXT    NOT NULL, -- JSON array
-  created_at    INTEGER NOT NULL
-);
-
+-- Claude connector: single-use authorization codes and access/refresh tokens,
+-- stored as SHA-256 hashes, never raw. All times are epoch ms.
+-- There is no clients table on purpose: client_ids are signed by the server
+-- (src/lib/oauth.ts), so public registration writes nothing and can't fill up.
 CREATE TABLE IF NOT EXISTS oauth_codes (
   code_hash      TEXT    PRIMARY KEY,
-  client_id      TEXT    NOT NULL REFERENCES oauth_clients(client_id) ON DELETE CASCADE,
+  client_id      TEXT    NOT NULL,
   user_id        INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   redirect_uri   TEXT    NOT NULL,
   code_challenge TEXT    NOT NULL,
@@ -23,10 +17,11 @@ CREATE TABLE IF NOT EXISTS oauth_tokens (
   token_hash TEXT    PRIMARY KEY,
   kind       TEXT    NOT NULL CHECK (kind IN ('access','refresh')),
   family     TEXT    NOT NULL,
-  client_id  TEXT    NOT NULL REFERENCES oauth_clients(client_id) ON DELETE CASCADE,
+  client_id  TEXT    NOT NULL,
   user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   expires_at INTEGER NOT NULL,
   revoked    INTEGER NOT NULL DEFAULT 0,
+  rotated_at INTEGER, -- set when a refresh token is exchanged; opens a short retry grace window
   created_at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_oauth_tokens_family ON oauth_tokens(family);

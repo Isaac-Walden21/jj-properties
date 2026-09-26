@@ -10,7 +10,7 @@ function recheck(form: FormData) {
   const q = Object.fromEntries(
     ["client_id", "redirect_uri", "code_challenge", "state"].map((k) => [k, String(form.get(k) ?? "") || undefined])
   );
-  return validateAuthorize(getDb(), { ...q, response_type: "code", code_challenge_method: "S256" });
+  return validateAuthorize({ ...q, response_type: "code", code_challenge_method: "S256" });
 }
 
 export async function approveConnect(form: FormData) {

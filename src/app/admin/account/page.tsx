@@ -12,7 +12,6 @@ export default async function AccountPage() {
   const me = await requireSession();
   const connections = listConnections(getDb(), me.userId).map((c) => ({
     family: c.family,
-    client_name: c.client_name,
     connected: formatWhen(new Date(c.connected_at).toISOString().slice(0, 19).replace("T", " "), true),
   }));
   return (

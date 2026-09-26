@@ -2,20 +2,23 @@
 // Public clients only (Claude registers itself via DCR), PKCE S256 required,
 // rotating refresh tokens with reuse detection. Every function takes the DB so
 // tests can run against :memory:.
-import { createHash, randomBytes, randomUUID } from "node:crypto";
+//
+// Registration is stateless: a client_id is the list of allowed redirect URIs it
+// may use, signed with SESSION_SECRET. Nothing is stored, so the public /register
+// endpoint can't fill a table or lock anyone out.
+import { createHash, createHmac, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import type Database from "better-sqlite3";
 
 export const ACCESS_TTL_MS = 60 * 60 * 1000; // 1 hour
 export const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 export const CODE_TTL_MS = 5 * 60 * 1000;
-export const MAX_CLIENTS = 200;
+// A rotated-out refresh token presented again within this window is treated as a
+// retry (Claude refreshing twice at once), not theft.
+export const REFRESH_RETRY_GRACE_MS = 30 * 1000;
 
 // Claude's hosted apps (claude.ai, Desktop, mobile, Cowork) all return here.
 // Claude Code's loopback redirect is deliberately not supported.
-export const ALLOWED_REDIRECTS = new Set([
-  "https://claude.ai/api/mcp/auth_callback",
-  "https://claude.com/api/mcp/auth_callback",
-]);
+const REDIRECTS = ["https://claude.ai/api/mcp/auth_callback", "https://claude.com/api/mcp/auth_callback"];
 
 type Db = Database.Database;
 const hash = (s: string) => createHash("sha256").update(s).digest("hex");
@@ -37,36 +40,37 @@ export function hit(db: Db, key: string, max: number, windowMs: number, now = Da
 }
 
 // ------------------------------------------------------------- registration --
-export type RegisterResult =
-  | { ok: true; client: { client_id: string; client_name: string | null; redirect_uris: string[] } }
-  | { ok: false; status: number; error: string; description: string };
-
-export function registerClient(db: Db, body: unknown, now = Date.now()): RegisterResult {
-  const b = (body ?? {}) as { redirect_uris?: unknown; client_name?: unknown };
-  const uris = b.redirect_uris;
-  if (!Array.isArray(uris) || uris.length === 0 || !uris.every((u) => typeof u === "string" && ALLOWED_REDIRECTS.has(u))) {
-    return { ok: false, status: 400, error: "invalid_redirect_uri", description: "Only Claude's hosted callback is accepted." };
-  }
-  const { n } = db.prepare("SELECT COUNT(*) AS n FROM oauth_clients").get() as { n: number };
-  if (n >= MAX_CLIENTS) {
-    return { ok: false, status: 503, error: "temporarily_unavailable", description: "Registration is full." };
-  }
-  const client_name = typeof b.client_name === "string" ? b.client_name.slice(0, 100) : null;
-  const client_id = randomUUID();
-  db.prepare("INSERT INTO oauth_clients (client_id, client_name, redirect_uris, created_at) VALUES (?, ?, ?, ?)").run(
-    client_id,
-    client_name,
-    JSON.stringify(uris),
-    now
-  );
-  return { ok: true, client: { client_id, client_name, redirect_uris: uris as string[] } };
+function sign(payload: string): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) throw new Error("SESSION_SECRET is not set");
+  return createHmac("sha256", secret).update(`oauth-client:${payload}`).digest("base64url").slice(0, 32);
 }
 
-export function getClient(db: Db, clientId: string) {
-  const row = db.prepare("SELECT * FROM oauth_clients WHERE client_id = ?").get(clientId) as
-    | { client_id: string; client_name: string | null; redirect_uris: string }
-    | undefined;
-  return row ? { ...row, redirect_uris: JSON.parse(row.redirect_uris) as string[] } : null;
+export type RegisterResult =
+  | { ok: true; client: { client_id: string; client_name: string; redirect_uris: string[] } }
+  | { ok: false; status: number; error: string; description: string };
+
+export function registerClient(body: unknown): RegisterResult {
+  const uris = (body as { redirect_uris?: unknown } | null)?.redirect_uris;
+  const idx = Array.isArray(uris) ? uris.map((u) => REDIRECTS.indexOf(u as string)) : [];
+  if (!idx.length || idx.includes(-1) || new Set(idx).size !== idx.length) {
+    return { ok: false, status: 400, error: "invalid_redirect_uri", description: "Only Claude's hosted callback is accepted." };
+  }
+  const payload = [...idx].sort().join("");
+  return {
+    ok: true,
+    client: { client_id: `claude-${payload}-${sign(payload)}`, client_name: "Claude", redirect_uris: uris as string[] },
+  };
+}
+
+/** Allowed redirect URIs for a client_id, or null if it wasn't issued by us. */
+export function getClient(clientId: string): { client_id: string; redirect_uris: string[] } | null {
+  const m = /^claude-([01]{1,2})-([A-Za-z0-9_-]{32})$/.exec(clientId);
+  if (!m) return null;
+  const expected = Buffer.from(sign(m[1]));
+  const given = Buffer.from(m[2]);
+  if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null;
+  return { client_id: clientId, redirect_uris: [...m[1]].map((i) => REDIRECTS[Number(i)]) };
 }
 
 // ---------------------------------------------------------------- authorize --
@@ -82,10 +86,9 @@ export interface AuthorizeParams {
  * back to redirect_uri: never when the client or redirect_uri itself is bad.
  */
 export function validateAuthorize(
-  db: Db,
   q: Record<string, string | undefined>
-): { ok: true; params: AuthorizeParams; clientName: string | null } | { ok: false; redirectable: boolean; error: string } {
-  const client = q.client_id ? getClient(db, q.client_id) : null;
+): { ok: true; params: AuthorizeParams } | { ok: false; redirectable: boolean; error: string } {
+  const client = q.client_id ? getClient(q.client_id) : null;
   if (!client) return { ok: false, redirectable: false, error: "Unknown client. Remove the connector in Claude and add it again." };
   if (!q.redirect_uri || !client.redirect_uris.includes(q.redirect_uri)) {
     return { ok: false, redirectable: false, error: "This sign-in link has an unexpected return address." };
@@ -94,7 +97,6 @@ export function validateAuthorize(
   if (!q.code_challenge || q.code_challenge_method !== "S256") return { ok: false, redirectable: true, error: "invalid_request" };
   return {
     ok: true,
-    clientName: client.client_name,
     params: { client_id: client.client_id, redirect_uri: q.redirect_uri, code_challenge: q.code_challenge, state: q.state },
   };
 }
@@ -154,16 +156,22 @@ export function refreshTokens(db: Db, f: { refresh_token?: string; client_id?: s
   if (!f.refresh_token) return { ok: false, error: "invalid_request" };
   return db.transaction((): TokenResult => {
     const row = db.prepare("SELECT * FROM oauth_tokens WHERE token_hash = ? AND kind = 'refresh'").get(hash(f.refresh_token!)) as
-      | { family: string; client_id: string; user_id: number; expires_at: number; revoked: number }
+      | { family: string; client_id: string; user_id: number; expires_at: number; revoked: number; rotated_at: number | null }
       | undefined;
     if (!row) return { ok: false, error: "invalid_grant" };
-    if (row.revoked) {
-      // A rotated-out refresh token came back: assume it leaked, cut off the whole sign-in.
-      revokeFamily(db, row.family);
-      return { ok: false, error: "invalid_grant", description: "Refresh token reuse detected." };
-    }
     if (row.expires_at < now || (f.client_id && f.client_id !== row.client_id)) return { ok: false, error: "invalid_grant" };
-    db.prepare("UPDATE oauth_tokens SET revoked = 1 WHERE family = ?").run(row.family);
+    if (row.revoked) {
+      const isRetry = row.rotated_at !== null && now - row.rotated_at < REFRESH_RETRY_GRACE_MS;
+      if (!isRetry) {
+        // A rotated-out refresh token came back late: assume it leaked, cut off the whole sign-in.
+        revokeFamily(db, row.family);
+        return { ok: false, error: "invalid_grant", description: "Refresh token reuse detected." };
+      }
+    } else {
+      db.prepare("UPDATE oauth_tokens SET revoked = 1, rotated_at = ? WHERE token_hash = ?").run(now, hash(f.refresh_token!));
+    }
+    // Earlier access tokens are left to expire on their own (≤ 1 hour) so a
+    // concurrent refresh doesn't invalidate the token the other request just got.
     return { ok: true, body: issue(db, row.client_id, row.user_id, row.family, now) };
   })();
 }
@@ -181,29 +189,26 @@ export function verifyAccessToken(db: Db, token: string, now = Date.now()): { us
 
 // ------------------------------------------------------------ housekeeping --
 export function revokeFamily(db: Db, family: string): void {
-  db.prepare("UPDATE oauth_tokens SET revoked = 1 WHERE family = ?").run(family);
+  // rotated_at cleared so no grace-window retry can revive a revoked sign-in.
+  db.prepare("UPDATE oauth_tokens SET revoked = 1, rotated_at = NULL WHERE family = ?").run(family);
 }
 
 /** Connected Claude sign-ins for the Account page: one row per live refresh token. */
 export function listConnections(db: Db, userId: number, now = Date.now()) {
   return db
     .prepare(
-      `SELECT t.family, c.client_name, MIN(f.created_at) AS connected_at
+      `SELECT t.family, MIN(f.created_at) AS connected_at
          FROM oauth_tokens t
-         JOIN oauth_clients c ON c.client_id = t.client_id
          JOIN oauth_tokens f ON f.family = t.family
         WHERE t.user_id = ? AND t.kind = 'refresh' AND t.revoked = 0 AND t.expires_at > ?
         GROUP BY t.family ORDER BY connected_at DESC`
     )
-    .all(userId, now) as { family: string; client_name: string | null; connected_at: number }[];
+    .all(userId, now) as { family: string; connected_at: number }[];
 }
 
 /** Drop dead rows so public endpoints can't grow the DB without bound. */
 export function prune(db: Db, now = Date.now()): void {
   db.prepare("DELETE FROM oauth_codes WHERE expires_at < ?").run(now);
   db.prepare("DELETE FROM oauth_tokens WHERE expires_at < ? OR (revoked = 1 AND created_at < ?)").run(now, now - REFRESH_TTL_MS);
-  db.prepare(
-    "DELETE FROM oauth_clients WHERE created_at < ? AND client_id NOT IN (SELECT DISTINCT client_id FROM oauth_tokens)"
-  ).run(now - 24 * 60 * 60 * 1000);
   db.prepare("DELETE FROM rate_hits WHERE window_start < ?").run(now - 24 * 60 * 60 * 1000);
 }

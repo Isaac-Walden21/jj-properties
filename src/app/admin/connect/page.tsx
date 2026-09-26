@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth/session";
-import { getDb } from "@/lib/db";
 import { validateAuthorize } from "@/lib/oauth";
 import { approveConnect, denyConnect } from "./actions";
 
@@ -15,7 +14,7 @@ export default async function ConnectPage({
 }) {
   const me = await requireSession();
   const q = await searchParams;
-  const v = validateAuthorize(getDb(), q);
+  const v = validateAuthorize(q);
 
   if (!v.ok && v.redirectable && q.redirect_uri) {
     const url = new URL(q.redirect_uri);
@@ -39,7 +38,7 @@ export default async function ConnectPage({
     <div className="max-w-md rounded-lg border border-stone-200 bg-white p-6 space-y-4">
       <h1 className="text-xl font-semibold">Connect Claude to your leads?</h1>
       <p className="text-sm text-stone-700">
-        <strong>{v.clientName || "Claude"}</strong> will act as <strong>{me.username}</strong>. It will be able to:
+        <strong>Claude</strong> will act as <strong>{me.username}</strong>. It will be able to:
       </p>
       <ul className="list-disc pl-5 text-sm text-stone-700 space-y-1">
         <li>See every lead and its notes</li>

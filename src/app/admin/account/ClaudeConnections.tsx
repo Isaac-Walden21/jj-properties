@@ -7,7 +7,7 @@ export default function ClaudeConnections({
   connections,
   mcpUrl,
 }: {
-  connections: { family: string; client_name: string | null; connected: string }[];
+  connections: { family: string; connected: string }[];
   mcpUrl: string;
 }) {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function ClaudeConnections({
           {connections.map((c) => (
             <li key={c.family} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
               <span>
-                {c.client_name || "Claude"} <span className="text-stone-500">· connected {c.connected}</span>
+                Claude <span className="text-stone-500">· connected {c.connected}</span>
               </span>
               <button
                 disabled={pending}

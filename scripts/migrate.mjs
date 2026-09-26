@@ -39,7 +39,7 @@ const missing = files.filter((f) => !recorded.has(f));
 const tables = new Set(
   db.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all().map((r) => r.name)
 );
-const needTables = ["users", "inquiries", "inquiry_notes", "login_attempts", "oauth_clients", "oauth_codes", "oauth_tokens", "rate_hits"].filter((t) => !tables.has(t));
+const needTables = ["users", "inquiries", "inquiry_notes", "login_attempts", "oauth_codes", "oauth_tokens", "rate_hits"].filter((t) => !tables.has(t));
 if (missing.length || needTables.length) {
   console.error(`FAILED: unrecorded migrations [${missing}] missing tables [${needTables}]`);
   process.exit(1);
