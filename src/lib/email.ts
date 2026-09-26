@@ -24,7 +24,7 @@ function capitalize(value: string): string {
  * - else   → Resend     (From = LEAD_FROM_EMAIL)
  */
 async function sendEmail(args: {
-  to: string;
+  to: string | string[];
   subject: string;
   text: string;
   html?: string;
@@ -102,7 +102,8 @@ export async function sendContactEmail(payload: ContactInput, requestId: string)
   lines.push("", "Message:", payload.message);
 
   await sendEmail({
-    to,
+    // LEAD_TO_EMAIL may list several addresses, comma-separated (Jack, Jeff, the shared inbox).
+    to: to.split(",").map((a) => a.trim()).filter(Boolean),
     subject,
     text: lines.join("\n"),
     replyTo: payload.email,

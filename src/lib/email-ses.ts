@@ -8,7 +8,7 @@ function getClient() {
 }
 
 export async function sendEmailViaSes(args: {
-  to: string;
+  to: string | string[];
   from: string;
   subject: string;
   text: string;
@@ -18,7 +18,7 @@ export async function sendEmailViaSes(args: {
   await getClient().send(
     new SendEmailCommand({
       Source: args.from,
-      Destination: { ToAddresses: [args.to] },
+      Destination: { ToAddresses: ([] as string[]).concat(args.to) },
       ReplyToAddresses: args.replyTo ? [args.replyTo] : undefined,
       Message: {
         Subject: { Data: args.subject, Charset: "UTF-8" },
