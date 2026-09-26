@@ -1,6 +1,15 @@
 # JJ Properties — HANDOFF
 
-## CRM back office (release 1) — built, NOT deployed — 2026-09-26
+## CRM back office (release 1) — LIVE 2026-09-26 (release 20260926-183547)
+
+- Deployed by Claude at Isaac's direct request. All health checks passed; cedarville + tahquamenon NRestarts unchanged.
+- DB: `/home/ubuntu/jj-data/crm.db` (dir 700). `.env.local` got `SQLITE_DB_PATH` + `SESSION_SECRET` (backup `.env.local.bak-20260926-183522`).
+- Logins created (all admin): isaac, jack, jeff — temp passwords given to Isaac in chat, never emailed.
+- Nightly backup: ubuntu crontab `15 7 * * *` UTC (3:15 AM ET) → `/home/ubuntu/jj-data/backups`, log `jj-data/backup.log`. First run OK.
+- Backup no-leftover-files fix (commit after cebd41f) is pushed but NOT yet deployed — ships with release 2.
+- Not checked by Claude: signing in on the live site (browser driving is localhost-only) and a real form submission (would email clients).
+
+### Original build notes
 
 **Branch `feat/crm-connector`** (worktree `~/Desktop/_Projects/jj-crm`). Built on Asher's `feat/crm-aws` (taken over; Asher is off it) and merged with production `cutover/jjresortproperties`. Plan + Codex rounds: `.review-loop/plan-2026-09-26-135553/`; code review: `.review-loop/2026-09-26-141937/` (git-ignored, local only).
 
@@ -12,7 +21,7 @@
 
 **NOT verified:** anything on the box (deploy is Isaac-only); real email sends; `npm ci` of better-sqlite3 on the box under the build memory cap.
 
-### First deploy — Isaac runs (order matters)
+### First deploy steps (done 2026-09-26, kept for reference)
 1. On the box: `mkdir -p /home/ubuntu/jj-data` and add to `~/app-jjproperties/.env.local`:
    `SQLITE_DB_PATH=/home/ubuntu/jj-data/crm.db` and `SESSION_SECRET=<openssl rand -hex 32>`. Without these the new migrate step stops the deploy (by design).
 2. Stop `jjproperties` first (memory gotcha below), then from the worktree: `./deploy/deploy.sh jjproperties deploy --yes --auto-rollback`. New step 3b backs up the DB, then migrates, before the build.
