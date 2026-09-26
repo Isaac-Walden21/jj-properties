@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { PageTransition } from "@/components/layout/PageTransition";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { ScrollToTopButton } from "@/components/layout/ScrollToTopButton";
 import { site } from "@/content/site";
 
@@ -76,12 +76,10 @@ export default function RootLayout({
         <OrganizationSchema />
       </head>
       <body className="font-body antialiased">
-        <Header />
-        <PageTransition>
-          <main>{children}</main>
-        </PageTransition>
+        <SiteChrome header={<Header />} footer={<Footer />}>
+          {children}
+        </SiteChrome>
         <ScrollToTopButton />
-        <Footer />
         <Analytics />
       </body>
     </html>
