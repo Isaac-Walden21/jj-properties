@@ -415,6 +415,17 @@ releases)
   done
   ;;
 
+# ------------------------------------------------------------------- migrate --
+# Runs BEFORE the build, so a failure leaves the old server running untouched.
+# Migrations are additive: the still-running old code works against the new
+# schema, and a later rollback needs no down-migration. scripts/db-path.mjs
+# loads .env.local and refuses a relative SQLITE_DB_PATH under NODE_ENV=production,
+# so this can never silently create a database inside the release dir.
+migrate)
+  cd "$REMOTE_DIR"
+  NODE_ENV=production node scripts/migrate.mjs
+  ;;
+
 *)
   die "unknown ACTION '$ACTION'"
   ;;

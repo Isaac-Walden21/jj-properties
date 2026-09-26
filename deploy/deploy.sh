@@ -455,6 +455,12 @@ deploy)
     step "3/6  Dependencies — skipped (already current)"
   fi
 
+  if [ "${MIGRATE:-no}" = "yes" ]; then
+    step "3b/6  Database migrations (before build; failure stops here, old server keeps serving)"
+    remote "ACTION=migrate" || die "migrations FAILED. Nothing was built or restarted, so the site
+    is still serving the previous build. Fix the migration and re-run."
+  fi
+
   step "4/6  Build on the box (~3 min, memory-capped)"
   if ! remote "ACTION=build" "RELEASE=$RELEASE" \
         "BUILD_ARGS=${BUILD_ARGS:---webpack}" \

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "migrate": "node scripts/migrate.mjs",
+    "backup": "node scripts/backup.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },
