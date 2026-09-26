@@ -8,6 +8,8 @@
 - Only Claude's hosted callback (claude.ai / claude.com) is accepted. Claude Code / Desktop-loopback clients are NOT supported (out of scope).
 - Verified: 15 unit tests (mutation-checked), scripted end-to-end on prod build, real claude.ai through a tunnel (DCR + consent + token + 12 MCP calls; that run predates the stateless client-id change), live discovery/401/DCR-reject via curl.
 - NOT verified: a real claude.ai connection against the live site (Isaac's first connect is the smoke test); a real Claude tool call from chat.
+- **Recheck ~2026-10-03:** Claude shows the connector's icon from Google's favicon cache (`google.com/s2/favicons?domain=jjresortproperties.com`), which on 9/26 still had the old Vercel default. Site now serves the J&J icon (DuckDuckGo already updated). If Google is still stale, try Search Console → request indexing; then remove + re-add the connector in Claude.
+- Welcome emails to Jack and Jeff (logins + Claude setup) drafted in Isaac's Gmail 9/26, one each so passwords aren't shared. Not sent.
 - Reviews: plan `.review-loop/plan-2026-09-26-135553/`, code `.review-loop/2026-09-26-144936-connector/` (local only).
 
 ## CRM back office (release 1) — LIVE 2026-09-26 (release 20260926-183547)
