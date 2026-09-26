@@ -1,5 +1,35 @@
 # JJ Properties — HANDOFF
 
+## CRM back office (release 1) — built, NOT deployed — 2026-09-26
+
+**Branch `feat/crm-connector`** (worktree `~/Desktop/_Projects/jj-crm`). Built on Asher's `feat/crm-aws` (taken over; Asher is off it) and merged with production `cutover/jjresortproperties`. Plan + Codex rounds: `.review-loop/plan-2026-09-26-135553/`; code review: `.review-loop/2026-09-26-141937/` (git-ignored, local only).
+
+**What Jack and Jeff get:** `/admin` login → lead list (filters, unread), lead page (status, notes), Logins page (admins add/remove), Account (change password). Leads save to SQLite before the staff email. Inquirer auto-ack email is ON (Isaac approved 9/26), plain text.
+
+**Isaac decisions 9/26:** auto-ack on; Jack + Jeff are admins; both on paid Claude plans (connector = release 2). No self-serve forgot-password: Isaac runs `node scripts/create-user.mjs --reset <username>` on the box (prints temp password, clears lockout, signs out old sessions).
+
+**Verified locally (prod build, `next start`):** tsc, vitest 6/6, build; scripted browser pass of every flow desktop + 390px mobile; sign-out-everywhere on password change; lockout after 10 fails; migrate idempotent + refuses relative path in prod; backup + restore rehearsal on a scratch DB. Console: only the known `/_vercel/insights` 404.
+
+**NOT verified:** anything on the box (deploy is Isaac-only); real email sends; `npm ci` of better-sqlite3 on the box under the build memory cap.
+
+### First deploy — Isaac runs (order matters)
+1. On the box: `mkdir -p /home/ubuntu/jj-data` and add to `~/app-jjproperties/.env.local`:
+   `SQLITE_DB_PATH=/home/ubuntu/jj-data/crm.db` and `SESSION_SECRET=<openssl rand -hex 32>`. Without these the new migrate step stops the deploy (by design).
+2. Stop `jjproperties` first (memory gotcha below), then from the worktree: `./deploy/deploy.sh jjproperties deploy --yes --auto-rollback`. New step 3b backs up the DB, then migrates, before the build.
+3. On the box, in `~/app-jjproperties`: `NODE_ENV=production node scripts/create-user.mjs isaac <email> admin`, then `jack jack.schiefelbein@yahoo.com admin`, `jeff jeff.lipple@gmail.com admin`. Each prints a temp password once — send to Jack/Jeff yourself.
+4. Nightly backup: `crontab -e` → `15 3 * * * cd /home/ubuntu/app-jjproperties && NODE_ENV=production node scripts/backup.mjs >> /home/ubuntu/jj-data/backup.log 2>&1`
+5. Smoke: submit the contact form once (emails the real inboxes + an ack to the address you type) → it shows in `/admin`.
+
+### Known, accepted
+- A login that has written notes can't be removed (notes keep their author) — the page says so.
+- If staff email fails after the lead saved, the visitor retries → duplicate lead. Rare; harmless.
+- Leads that fail to save still email staff, with `[NOT IN CRM]` in the subject.
+
+### Next: release 2 — Claude connector
+Plan is agreed (`r3/plan.md` Release 2): spike first (discovery + sign-in + tool list through a tunnel, tested in Isaac's Claude), then full tools (list/get/status/note/mark read), OAuth abuse caps, revoke on Account page.
+
+---
+
 ## LIVE on jjresortproperties.com — 2026-09-24
 
 - Domain bought by Isaac in Cloudflare (zone `8ec693019b2779b7fdf59b7ab93864d4`). Apex + www A records -> 3.133.239.181, DNS-only, TTL 300.
