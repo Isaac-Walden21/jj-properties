@@ -22,7 +22,9 @@ const db = new Database(src, { readonly: true, fileMustExist: true });
 await db.backup(dest);
 db.close();
 
-const copy = new Database(dest, { readonly: true });
+// The copy inherits WAL mode; switch it to a single self-contained file (no -wal/-shm left behind).
+const copy = new Database(dest);
+copy.pragma("journal_mode = DELETE");
 const { leads } = copy.prepare("SELECT COUNT(*) AS leads FROM inquiries").get();
 const { people } = copy.prepare("SELECT COUNT(*) AS people FROM users").get();
 copy.close();
