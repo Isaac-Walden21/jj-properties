@@ -6,6 +6,7 @@ import { getInquiry, listInquiries, updateInquiry } from "@/lib/db/inquiries";
 import { createNote, listNotes } from "@/lib/db/notes";
 import { hit, verifyAccessToken } from "@/lib/oauth";
 import { RESOURCE_METADATA_URL } from "@/lib/connector";
+import { SITE_URL } from "@/lib/site-url";
 import { properties } from "@/content/properties";
 import type { Inquiry } from "@/types/crm";
 
@@ -36,7 +37,12 @@ const json = (data: unknown) => ({ content: [{ type: "text" as const, text: JSON
 const fail = (text: string) => ({ content: [{ type: "text" as const, text }], isError: true });
 
 function buildServer(userId: number) {
-  const server = new McpServer({ name: "jj-resort-properties-leads", version: "1.0.0" });
+  const server = new McpServer({
+    name: "jj-resort-properties-leads",
+    title: "J & J Resort Properties Leads",
+    version: "1.0.0",
+    icons: [{ src: `${SITE_URL}/connector-icon.png`, mimeType: "image/png", sizes: ["512x512"] }],
+  });
 
   server.registerTool(
     "list_leads",
