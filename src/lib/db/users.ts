@@ -51,11 +51,15 @@ export function createUser(input: {
   );
 }
 
-/** Also bumps session_version, which signs out every existing session for this user. */
+/**
+ * Also bumps session_version (signs out every browser session) and revokes every
+ * Claude connector sign-in for this user.
+ */
 export function updateUserPassword(id: number, password_hash: string): number {
   getDb()
     .prepare("UPDATE users SET password_hash = ?, session_version = session_version + 1 WHERE id = ?")
     .run(password_hash, id);
+  getDb().prepare("UPDATE oauth_tokens SET revoked = 1 WHERE user_id = ?").run(id);
   return getUserById(id)!.session_version!;
 }
 

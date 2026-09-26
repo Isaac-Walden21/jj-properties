@@ -33,8 +33,9 @@ if (reset) {
     console.error(`No login named '${username}' in ${path}`);
     process.exit(1);
   }
-  // A reset signs out every existing session (session_version) and lifts any lockout on that name.
+  // A reset signs out every browser session (session_version) and Claude connection, and lifts any lockout.
   db.prepare("DELETE FROM login_attempts WHERE key = ?").run(`user:${username.toLowerCase()}`);
+  db.prepare("UPDATE oauth_tokens SET revoked = 1 WHERE user_id = (SELECT id FROM users WHERE username = ? COLLATE NOCASE)").run(username);
   console.log(`Reset '${username}' in ${path}`);
 } else {
   db.prepare("INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)").run(username, email, hash, role);

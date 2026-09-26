@@ -22,7 +22,9 @@ export async function middleware(request: NextRequest) {
   if (!session.userId) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
-    url.searchParams.set("next", pathname);
+    url.search = "";
+    // Keep the query: the Claude connect page carries its OAuth request in it.
+    url.searchParams.set("next", pathname + request.nextUrl.search);
     return NextResponse.redirect(url);
   }
 

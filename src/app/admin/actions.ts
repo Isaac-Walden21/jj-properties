@@ -6,6 +6,8 @@ import { createNote } from "@/lib/db/notes";
 import { createUser, removeUser, listUsers, getUserById, updateUserPassword } from "@/lib/db/users";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { getSession } from "@/lib/auth/session";
+import { getDb } from "@/lib/db";
+import { revokeFamily } from "@/lib/oauth";
 import type { InquiryStatus, UserRole } from "@/types/crm";
 
 // Server actions are public endpoints: every argument is re-checked here.
@@ -101,5 +103,17 @@ export async function changePassword(current: string, next: string): Promise<Act
   const session = await getSession();
   session.sessionVersion = version;
   await session.save();
+  return {};
+}
+
+export async function disconnectClaude(family: string): Promise<ActionResult> {
+  const { userId } = await requireSession();
+  // Only the caller's own connections: the family must belong to them.
+  const owned = getDb()
+    .prepare("SELECT 1 FROM oauth_tokens WHERE family = ? AND user_id = ? LIMIT 1")
+    .get(String(family ?? ""), userId);
+  if (!owned) return { error: "Connection not found." };
+  revokeFamily(getDb(), String(family));
+  revalidatePath("/admin/account");
   return {};
 }
