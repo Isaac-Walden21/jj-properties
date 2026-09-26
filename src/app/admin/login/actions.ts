@@ -18,7 +18,8 @@ export async function loginAction(_prev: LoginState, formData: FormData): Promis
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "/admin") || "/admin";
 
-  const keys = [`user:${username.toLowerCase()}`, `ip:${getTrustedIp(await headers())}`];
+  const ip = getTrustedIp(await headers());
+  const keys = [`user:${username.toLowerCase()}`, ...(ip ? [`ip:${ip}`] : [])];
   if (isLocked(getDb(), keys)) {
     return { error: "Too many failed attempts. Wait 15 minutes and try again.", username };
   }
@@ -35,6 +36,7 @@ export async function loginAction(_prev: LoginState, formData: FormData): Promis
   session.userId = user.id;
   session.username = user.username;
   session.role = user.role;
+  session.sessionVersion = user.session_version ?? 0;
   await session.save();
   // Only same-site admin paths; "//evil.com" style values fall back to /admin.
   redirect(next.startsWith("/admin") ? next : "/admin");

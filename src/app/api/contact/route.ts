@@ -19,8 +19,9 @@ function sourcePathFromReferer(referer: string | null): string | null {
 export async function POST(request: Request) {
   try {
     // --- Rate limiting ---
+    // No trusted IP → skip rather than share one bucket; nginx rate-limits /api/contact too.
     const ip = getTrustedIp(request.headers);
-    if (!checkContactRateLimit(ip)) {
+    if (ip && !checkContactRateLimit(ip)) {
       return NextResponse.json<ContactResponse>(
         {
           ok: false,
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
     const sourceProperty = data.sourceProperty || data.propertyInterest || null;
 
     // --- Persist to SQLite (best-effort: never blocks email send) ---
+    let savedToCrm = false;
     try {
       createInquiry({
         request_id: requestId,
@@ -93,13 +95,14 @@ export async function POST(request: Request) {
         sell_walkaway:
           data.inquiryType === "sell" ? data.sellWalkaway || null : null,
       });
+      savedToCrm = true;
     } catch (dbErr) {
       console.error("[contact] DB insert failed:", dbErr);
     }
 
     // --- Send staff notification email ---
     try {
-      await sendContactEmail(data, requestId);
+      await sendContactEmail(data, requestId, savedToCrm);
     } catch (emailError) {
       console.error("[contact] Email send failed:", emailError);
       return NextResponse.json<ContactResponse>(

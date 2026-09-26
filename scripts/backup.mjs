@@ -2,12 +2,18 @@
 // then open the copy and query it so a broken backup fails loudly.
 //   restore: stop the service, copy a backup over SQLITE_DB_PATH, delete any -wal/-shm beside it, start.
 import Database from "better-sqlite3";
-import { mkdirSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { dbPath } from "./db-path.mjs";
 
 const KEEP = 14;
 const src = dbPath();
+// --if-exists: the deploy's pre-migration backup, where a first deploy has no DB yet.
+// The nightly run omits it, so a missing DB fails loudly there.
+if (process.argv.includes("--if-exists") && !existsSync(src)) {
+  console.log(`no database at ${src} yet — nothing to back up`);
+  process.exit(0);
+}
 const dir = process.env.CRM_BACKUP_DIR || join(dirname(src), "backups");
 const dest = join(dir, `crm-${new Date().toISOString().slice(0, 10)}.db`);
 

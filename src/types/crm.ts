@@ -39,6 +39,7 @@ export interface StaffUser {
   role: UserRole;
   created_at: string;
   added_by: number | null;
+  session_version?: number;
 }
 
 export interface InquiryFilters {

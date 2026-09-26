@@ -69,14 +69,15 @@ async function sendEmail(args: {
 /**
  * Sends the contact form submission as a staff notification email.
  */
-export async function sendContactEmail(payload: ContactInput, requestId: string) {
+export async function sendContactEmail(payload: ContactInput, requestId: string, savedToCrm = true) {
   const to = process.env.LEAD_TO_EMAIL;
   if (!to) {
     throw new Error("LEAD_TO_EMAIL environment variable is not set");
   }
 
   const inquiryLabel = capitalize(payload.inquiryType);
-  const subject = `[J & J Resort Properties] ${inquiryLabel} Inquiry`;
+  // If the DB write failed, this email is the only copy — say so, so it gets entered by hand.
+  const subject = `${savedToCrm ? "" : "[NOT IN CRM] "}[J & J Resort Properties] ${inquiryLabel} Inquiry`;
 
   const lines = [
     `Request ID: ${requestId}`,

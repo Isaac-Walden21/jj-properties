@@ -6,6 +6,7 @@ export interface SessionData {
   userId?: number;
   username?: string;
   role?: UserRole;
+  sessionVersion?: number;
 }
 
 export const sessionOptions: SessionOptions = {

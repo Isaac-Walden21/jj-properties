@@ -12,14 +12,17 @@ export async function getSession() {
 }
 
 /**
- * Signed-in user, re-read from the DB on every call: a removed account or a
- * changed role takes effect immediately, not when the 8-hour cookie expires.
+ * Signed-in user, re-read from the DB on every call: a removed account, a changed
+ * role or a changed password takes effect immediately, not when the 8-hour cookie expires.
  */
 export async function requireSession() {
   const session = await getSession();
   const user = session.userId ? getUserById(session.userId) : null;
+  // A password change bumps session_version, signing out every older cookie.
   // Server components can't clear cookies, so a stale cookie goes through the logout route.
-  if (!user) redirect(session.userId ? "/admin/logout" : "/admin/login");
+  if (!user || user.session_version !== (session.sessionVersion ?? 0)) {
+    redirect(session.userId ? "/admin/logout" : "/admin/login");
+  }
   return { userId: user.id, username: user.username, role: user.role };
 }
 

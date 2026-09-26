@@ -51,8 +51,12 @@ export function createUser(input: {
   );
 }
 
-export function updateUserPassword(id: number, password_hash: string): void {
-  getDb().prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(password_hash, id);
+/** Also bumps session_version, which signs out every existing session for this user. */
+export function updateUserPassword(id: number, password_hash: string): number {
+  getDb()
+    .prepare("UPDATE users SET password_hash = ?, session_version = session_version + 1 WHERE id = ?")
+    .run(password_hash, id);
+  return getUserById(id)!.session_version!;
 }
 
 export function removeUser(id: number): void {

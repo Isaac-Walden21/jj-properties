@@ -28,12 +28,12 @@ const password = randomBytes(9).toString("base64url"); // 12 chars
 const hash = bcrypt.hashSync(password, Number(process.env.BCRYPT_COST ?? 12));
 
 if (reset) {
-  const { changes } = db.prepare("UPDATE users SET password_hash = ? WHERE username = ? COLLATE NOCASE").run(hash, username);
+  const { changes } = db.prepare("UPDATE users SET password_hash = ?, session_version = session_version + 1 WHERE username = ? COLLATE NOCASE").run(hash, username);
   if (!changes) {
     console.error(`No login named '${username}' in ${path}`);
     process.exit(1);
   }
-  // A reset also lifts any lockout on that name.
+  // A reset signs out every existing session (session_version) and lifts any lockout on that name.
   db.prepare("DELETE FROM login_attempts WHERE key = ?").run(`user:${username.toLowerCase()}`);
   console.log(`Reset '${username}' in ${path}`);
 } else {

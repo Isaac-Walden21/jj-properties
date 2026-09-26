@@ -423,6 +423,8 @@ releases)
 # so this can never silently create a database inside the release dir.
 migrate)
   cd "$REMOTE_DIR"
+  # Back up first: a code rollback does not roll the database back.
+  NODE_ENV=production node scripts/backup.mjs --if-exists
   NODE_ENV=production node scripts/migrate.mjs
   ;;
 

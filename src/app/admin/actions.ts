@@ -5,6 +5,7 @@ import { updateInquiry } from "@/lib/db/inquiries";
 import { createNote } from "@/lib/db/notes";
 import { createUser, removeUser, listUsers, getUserById, updateUserPassword } from "@/lib/db/users";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
+import { getSession } from "@/lib/auth/session";
 import type { InquiryStatus, UserRole } from "@/types/crm";
 
 // Server actions are public endpoints: every argument is re-checked here.
@@ -95,6 +96,10 @@ export async function changePassword(current: string, next: string): Promise<Act
     return { error: "Current password is wrong." };
   }
   if (String(next ?? "").length < MIN_PASSWORD) return { error: `New password must be ${MIN_PASSWORD}+ characters.` };
-  updateUserPassword(userId, await hashPassword(next));
+  const version = updateUserPassword(userId, await hashPassword(next));
+  // Keep this browser signed in; every other session for this user is now invalid.
+  const session = await getSession();
+  session.sessionVersion = version;
+  await session.save();
   return {};
 }
