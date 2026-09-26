@@ -1,40 +1,31 @@
-import { getIronSession, type SessionOptions } from "iron-session";
+import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import type { UserRole } from "@/types/crm";
+import { getUserById } from "@/lib/db/users";
+import { sessionOptions, type SessionData } from "./session-options";
 
-export interface SessionData {
-  userId?: number;
-  username?: string;
-  role?: UserRole;
-}
-
-export const sessionOptions: SessionOptions = {
-  password: process.env.SESSION_SECRET as string,
-  cookieName: "jj_admin_session",
-  cookieOptions: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 8, // 8 hours
-  },
-};
+export { sessionOptions, type SessionData };
 
 export async function getSession() {
   const cookieStore = await cookies();
   return getIronSession<SessionData>(cookieStore, sessionOptions);
 }
 
+/**
+ * Signed-in user, re-read from the DB on every call: a removed account or a
+ * changed role takes effect immediately, not when the 8-hour cookie expires.
+ */
 export async function requireSession() {
   const session = await getSession();
-  if (!session.userId) redirect("/admin/login");
-  return session;
+  const user = session.userId ? getUserById(session.userId) : null;
+  // Server components can't clear cookies, so a stale cookie goes through the logout route.
+  if (!user) redirect(session.userId ? "/admin/logout" : "/admin/login");
+  return { userId: user.id, username: user.username, role: user.role };
 }
 
 /** Use in admin-only actions/pages (e.g. user management). */
 export async function requireAdmin() {
-  const session = await requireSession();
-  if (session.role !== "admin") redirect("/admin");
-  return session;
+  const user = await requireSession();
+  if (user.role !== "admin") redirect("/admin");
+  return user;
 }

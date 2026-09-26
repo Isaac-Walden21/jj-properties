@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getIronSession } from "iron-session";
-import { sessionOptions, type SessionData } from "@/lib/auth/session";
+import { sessionOptions, type SessionData } from "@/lib/auth/session-options";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -9,10 +9,10 @@ export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
   const session = await getIronSession<SessionData>(request, res, sessionOptions);
 
-  // Public admin routes: login and the password-reset flow.
-  const PUBLIC = new Set(["/admin/login", "/admin/forgot-password", "/admin/reset-password"]);
+  // The only public admin route.
+  const PUBLIC = new Set(["/admin/login"]);
   if (PUBLIC.has(pathname)) {
-    // Already signed in? Skip login (but still allow reset pages, e.g. via email link).
+    // Already signed in? Skip login.
     if (pathname === "/admin/login" && session.userId) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }

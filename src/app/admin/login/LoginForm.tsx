@@ -12,6 +12,7 @@ export default function LoginForm({ next }: { next: string }) {
         <span className="text-sm font-medium text-stone-700">Username</span>
         <input
           name="username"
+          defaultValue={state.username}
           required
           autoComplete="username"
           className="mt-1 w-full rounded-md border border-stone-300 px-3 py-2 text-stone-900 focus:border-stone-900 focus:outline-none"

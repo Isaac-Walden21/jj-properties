@@ -4,21 +4,22 @@ import { formatContactFieldErrors } from "@/lib/validation/errors";
 import { checkContactRateLimit } from "@/lib/rate-limit";
 import { sendContactEmail, sendInquiryAck } from "@/lib/email";
 import { createInquiry } from "@/lib/db/inquiries";
+import { getTrustedIp } from "@/lib/auth/ip";
 import type { ContactResponse } from "@/types";
 
-function getClientIp(request: Request): string {
-  const headers = new Headers(request.headers);
-  const forwarded = headers.get("x-forwarded-for");
-  if (forwarded) {
-    return forwarded.split(",")[0].trim();
+function sourcePathFromReferer(referer: string | null): string | null {
+  if (!referer) return null;
+  try {
+    return new URL(referer).pathname;
+  } catch {
+    return null; // a malformed Referer must not cost us the lead
   }
-  return headers.get("x-real-ip") ?? "unknown";
 }
 
 export async function POST(request: Request) {
   try {
     // --- Rate limiting ---
-    const ip = getClientIp(request);
+    const ip = getTrustedIp(request.headers);
     if (!checkContactRateLimit(ip)) {
       return NextResponse.json<ContactResponse>(
         {
@@ -68,9 +69,8 @@ export async function POST(request: Request) {
     const requestId = crypto.randomUUID();
 
     // Lead source: client-provided fields first, then Referer path as a fallback.
-    const referer = request.headers.get("referer");
     const sourcePage =
-      data.sourcePage || (referer ? new URL(referer).pathname : null);
+      data.sourcePage || sourcePathFromReferer(request.headers.get("referer"));
     const sourceProperty = data.sourceProperty || data.propertyInterest || null;
 
     // --- Persist to SQLite (best-effort: never blocks email send) ---
